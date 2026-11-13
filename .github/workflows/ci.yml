@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      # Build-time placeholders. Real secrets are injected by the hosting
+      # platform; CI only needs values that pass env validation.
+      MONGODB_URI: mongodb://127.0.0.1:27017/employee_management
+      JWT_SECRET: ci-only-placeholder-secret-at-least-32-characters
+      JWT_EXPIRES_IN: 7d
+      ADMIN_EMAIL: admin@example.com
+      ADMIN_PASSWORD: Admin@12345
+      NEXT_PUBLIC_APP_NAME: Employee Management
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
