@@ -103,11 +103,12 @@ export const SelectTrigger = React.forwardRef<
         }
       }}
       className={cn(
-        "flex h-10 w-full items-center justify-between gap-2 rounded-input border border-border bg-surface-2 px-3 py-2 text-left text-sm text-foreground",
-        "transition-[border-color,box-shadow,background-color] duration-200",
-        "hover:bg-surface focus-visible:border-primary focus-visible:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "flex h-11 w-full items-center justify-between gap-2 rounded-input border border-border-strong bg-surface px-3 py-2 text-left text-sm text-foreground",
+        "[transition:border-color_0.2s,box-shadow_0.2s,background-color_0.2s,background-size_0.25s_cubic-bezier(0.165,0.84,0.44,1)]",
+        "hover:border-foreground/40 focus-visible:border-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         "disabled:cursor-not-allowed disabled:opacity-50",
-        invalid && "border-danger focus-visible:ring-danger",
+        "[background-image:linear-gradient(var(--highlight),var(--highlight))] [background-position:left_bottom] [background-size:0%_2px] bg-no-repeat",
+        invalid && "border-foreground [background-size:100%_2px]",
         className,
       )}
       {...props}
@@ -115,6 +116,7 @@ export const SelectTrigger = React.forwardRef<
       {children}
       <ChevronDown
         aria-hidden="true"
+        strokeWidth={1.5}
         className={cn(
           "size-4 shrink-0 text-muted-foreground transition-transform duration-200",
           open && "rotate-180",
@@ -184,7 +186,7 @@ export const SelectItem = React.forwardRef<
       className={cn(
         "flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm transition-colors",
         selected
-          ? "bg-primary-soft text-primary"
+          ? "bg-surface-2 text-foreground"
           : "text-foreground hover:bg-surface-2",
         className,
       )}
@@ -192,7 +194,11 @@ export const SelectItem = React.forwardRef<
     >
       <span className="flex-1 truncate">{children}</span>
       {selected ? (
-        <Check className="size-4 shrink-0 text-primary" aria-hidden="true" />
+        <Check
+          className="size-4 shrink-0 text-foreground"
+          strokeWidth={1.5}
+          aria-hidden="true"
+        />
       ) : null}
     </button>
   );

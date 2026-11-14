@@ -2,9 +2,9 @@
 
 import * as React from "react";
 
-import type { SessionUser } from "@/shared/types/auth";
+import type { SessionUserDTO } from "@/shared/types/account";
 
-const SessionContext = React.createContext<SessionUser | null>(null);
+const SessionContext = React.createContext<SessionUserDTO | null>(null);
 
 /**
  * Provides the server-resolved session to client components. The dashboard
@@ -15,7 +15,7 @@ export function SessionProvider({
   user,
   children,
 }: {
-  user: SessionUser;
+  user: SessionUserDTO;
   children: React.ReactNode;
 }) {
   return (
@@ -23,7 +23,7 @@ export function SessionProvider({
   );
 }
 
-export function useSession(): SessionUser {
+export function useSession(): SessionUserDTO {
   const context = React.useContext(SessionContext);
   if (!context) {
     throw new Error("useSession must be used inside <SessionProvider>");

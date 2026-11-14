@@ -18,14 +18,14 @@ import { useSidebarToggle } from "@/components/layout/sidebar-toggle-context";
 import { Logo } from "@/components/common/Logo";
 import { Avatar } from "@/components/common/Avatar";
 import { Tooltip } from "@/components/ui/tooltip";
-import { DotBadge } from "@/components/ui/badge";
-import type { SessionUser } from "@/shared/types/auth";
+import { Badge } from "@/components/ui/badge";
+import type { SessionUserDTO } from "@/shared/types/account";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
   href: string;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
 }
 
 interface NavSection {
@@ -48,7 +48,7 @@ const SECTIONS: NavSection[] = [
 ];
 
 /** Hides mutating entries (Add Employee) from viewers. */
-function visibleSections(role: SessionUser["role"]): NavSection[] {
+function visibleSections(role: SessionUserDTO["role"]): NavSection[] {
   if (role === "admin") return SECTIONS;
   return SECTIONS.map((section) => ({
     ...section,
@@ -57,7 +57,7 @@ function visibleSections(role: SessionUser["role"]): NavSection[] {
 }
 
 export interface SidebarProps {
-  user: SessionUser;
+  user: SessionUserDTO;
 }
 
 function isActive(pathname: string, href: string): boolean {
@@ -124,7 +124,7 @@ export function Sidebar({ user }: SidebarProps) {
     { scope: ref, dependencies: [collapsed] },
   );
 
-  // Move the active indicator pill to the active link.
+  // Move the active indicator bar to the active link.
   React.useLayoutEffect(() => {
     const indicator = indicatorRef.current;
     if (!indicator) return;
@@ -144,7 +144,7 @@ export function Sidebar({ user }: SidebarProps) {
       autoAlpha: 1,
       top: activeEl.offsetTop,
       height: activeEl.offsetHeight,
-      width: collapsed ? 40 : 196,
+      width: 2,
       duration: DUR.base,
       ease: EASE.smooth,
     });
@@ -154,7 +154,7 @@ export function Sidebar({ user }: SidebarProps) {
     <aside
       ref={ref}
       style={{ width: collapsed ? 76 : 264 }}
-      className="fixed inset-y-0 left-0 z-30 hidden shrink-0 flex-col border-r border-border bg-surface lg:flex"
+      className="fixed inset-y-0 left-0 z-30 hidden shrink-0 flex-col border-r border-border bg-background lg:flex"
     >
       {/* Logo */}
       <div
@@ -171,21 +171,25 @@ export function Sidebar({ user }: SidebarProps) {
         aria-label="Primary"
         className="relative flex-1 overflow-y-auto overflow-x-hidden px-3 py-5 scrollbar-slim"
       >
-        {/* Animated active indicator pill */}
+        {/* Animated active indicator bar */}
         <span
           ref={indicatorRef}
           aria-hidden="true"
-          className="pointer-events-none absolute left-3 rounded-input bg-primary-soft"
-          style={{ top: 0, height: 40, width: collapsed ? 40 : 196 }}
+          className="pointer-events-none absolute left-3 z-10 bg-highlight"
+          style={{ top: 0, height: 40, width: 2 }}
         />
 
-        {visibleSections(user.role).map((section) => (
+        {visibleSections(user.role).map((section, sectionIndex) => (
           <div key={section.title} className="mb-5 last:mb-0">
             <p
               data-anim="label"
-              className="caption mb-2 px-3 font-semibold uppercase tracking-wider text-muted-foreground"
+              className="eyebrow mb-2 flex items-center gap-1 px-3 text-muted-foreground"
             >
-              {section.title}
+              <span className="font-mono">
+                {String(sectionIndex + 1).padStart(2, "0")}
+              </span>
+              <span aria-hidden="true">/</span>
+              <span>{section.title}</span>
             </p>
             <div
               className={cn(
@@ -211,12 +215,12 @@ export function Sidebar({ user }: SidebarProps) {
                       "relative flex h-10 items-center gap-3 rounded-input px-3 text-sm font-medium transition-colors duration-200",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                       active
-                        ? "text-primary"
+                        ? "bg-surface-2 text-foreground"
                         : "text-muted-foreground hover:bg-surface-2 hover:text-foreground",
                       collapsed && "justify-center px-0",
                     )}
                   >
-                    <Icon className="size-4 shrink-0" />
+                    <Icon className="size-4 shrink-0" strokeWidth={1.5} />
                     <span
                       data-anim="label"
                       className="min-w-0 truncate"
@@ -262,12 +266,12 @@ export function Sidebar({ user }: SidebarProps) {
             <p className="truncate text-sm font-medium text-foreground">
               {user.name}
             </p>
-            <DotBadge
-              variant={user.role === "admin" ? "primary" : "muted"}
+            <Badge
+              variant={user.role === "admin" ? "default" : "muted"}
               className="mt-1 px-1.5 py-0 text-[11px] capitalize"
             >
               {user.role}
-            </DotBadge>
+            </Badge>
           </div>
         </div>
       </div>
@@ -283,9 +287,13 @@ export function Sidebar({ user }: SidebarProps) {
         )}
       >
         {collapsed ? (
-          <PanelLeft className="size-3.5" aria-hidden="true" />
+          <PanelLeft className="size-4" strokeWidth={1.5} aria-hidden="true" />
         ) : (
-          <PanelLeftClose className="size-3.5" aria-hidden="true" />
+          <PanelLeftClose
+            className="size-4"
+            strokeWidth={1.5}
+            aria-hidden="true"
+          />
         )}
       </button>
     </aside>

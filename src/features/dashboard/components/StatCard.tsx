@@ -6,18 +6,13 @@ import { useMotion } from "@/animations/use-motion";
 import { scaleIn } from "@/animations/presets";
 import { CountUp } from "@/components/motion/CountUp";
 import { gsap } from "@/animations/gsap";
-import { cn } from "@/lib/utils";
 
 export type StatTone = "primary" | "success" | "warning" | "accent";
 
-type IconComponent = React.ComponentType<{ className?: string }>;
-
-const TONES: Record<StatTone, string> = {
-  primary: "bg-primary-soft text-primary",
-  success: "bg-success/12 text-success",
-  warning: "bg-warning/15 text-warning",
-  accent: "bg-accent-soft text-accent",
-};
+type IconComponent = React.ComponentType<{
+  className?: string;
+  strokeWidth?: number;
+}>;
 
 export interface StatCardProps {
   label: string;
@@ -26,15 +21,17 @@ export interface StatCardProps {
   tone: StatTone;
   caption?: string;
   loading?: boolean;
+  /** Grid position, rendered as a two-digit mono index ("01 / Total"). */
+  index?: number;
 }
 
 export function StatCard({
   label,
   value,
   icon: Icon,
-  tone,
   caption,
   loading = false,
+  index,
 }: StatCardProps) {
   const ref = React.useRef<HTMLElement>(null);
 
@@ -75,6 +72,8 @@ export function StatCard({
     { scope: ref },
   );
 
+  const digitCount = String(value).length;
+
   return (
     <article
       ref={ref as React.RefObject<HTMLElement>}
@@ -82,26 +81,40 @@ export function StatCard({
       className="rounded-card border border-border bg-surface p-5 shadow-card"
     >
       <div className="flex items-start justify-between gap-4">
-        <span
-          data-anim="chip"
-          className={cn(
-            "inline-flex size-11 items-center justify-center rounded-input",
-            TONES[tone],
+        <p className="eyebrow text-muted-foreground">
+          {index != null ? (
+            <>
+              <span className="font-mono">{String(index).padStart(2, "0")}</span>
+              {" / "}
+              {label}
+            </>
+          ) : (
+            label
           )}
-        >
-          <Icon className="size-5" aria-hidden="true" />
+        </p>
+        <span data-anim="chip" className="inline-flex text-muted-foreground">
+          <Icon className="size-4" strokeWidth={1.5} aria-hidden="true" />
         </span>
       </div>
 
-      <p className="stat-number mt-4 text-foreground">
-        {loading ? "—" : <CountUp value={value} />}
-      </p>
+      <div className="mt-4 border-t border-border pt-4">
+        <p className="stat-number text-foreground">
+          {loading ? (
+            "—"
+          ) : (
+            <span
+              className="inline-block"
+              style={{ minWidth: `${digitCount}ch` }}
+            >
+              <CountUp value={value} />
+            </span>
+          )}
+        </p>
 
-      <p className="mt-1 text-sm font-medium text-muted-foreground">{label}</p>
-
-      {caption && !loading ? (
-        <p className="caption mt-2 text-muted-foreground">{caption}</p>
-      ) : null}
+        {caption && !loading ? (
+          <p className="caption mt-2 text-muted-foreground">{caption}</p>
+        ) : null}
+      </div>
     </article>
   );
 }

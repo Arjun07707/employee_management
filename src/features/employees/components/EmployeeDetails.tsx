@@ -20,10 +20,11 @@ import { Avatar } from "@/components/common/Avatar";
 import { CopyButton } from "@/components/common/CopyButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DEPARTMENT_COLORS } from "@/shared/constants";
 import { formatDate, formatINR, tenure } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { StatusBadge } from "@/features/employees/components/StatusBadge";
+import { DepartmentBadge } from "@/features/employees/components/DepartmentBadge";
+import { LoginAccessCard } from "@/features/employee-access/components/LoginAccessCard";
 import type { Employee } from "@/shared/types/employee";
 
 export interface EmployeeDetailsProps {
@@ -37,14 +38,18 @@ function InfoRow({
   label,
   children,
 }: {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
   label: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="flex items-start gap-3 py-3">
       <span className="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-md bg-surface-2">
-        <Icon className="size-4 text-muted-foreground" aria-hidden="true" />
+        <Icon
+          className="size-4 text-muted-foreground"
+          strokeWidth={1.5}
+          aria-hidden="true"
+        />
       </span>
       <div className="min-w-0">
         <dt className="caption text-muted-foreground">{label}</dt>
@@ -93,17 +98,8 @@ export function EmployeeDetails({
       {/* Hero */}
       <div
         ref={heroRef}
-        className="relative overflow-hidden rounded-card border border-border bg-surface p-6 shadow-card"
+        className="relative overflow-hidden rounded-card border border-border bg-surface p-6"
       >
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-20 -top-24 size-64 rounded-full opacity-40 blur-3xl"
-          style={{
-            backgroundImage:
-              "linear-gradient(135deg, #5B5BD6 0%, #8B5CF6 50%, #14B8A6 100%)",
-          }}
-        />
-
         <div className="relative flex flex-col items-start gap-5 sm:flex-row sm:items-center">
           <Avatar name={employee.name} size="xl" />
 
@@ -123,26 +119,14 @@ export function EmployeeDetails({
               <span aria-hidden="true" className="text-muted-foreground/40">
                 ·
               </span>
-              <span
-                className="inline-flex items-center gap-1.5 rounded-full bg-surface-2 px-2.5 py-0.5 text-xs font-medium"
-                style={{ color: DEPARTMENT_COLORS[employee.department] }}
-              >
-                <span
-                  aria-hidden="true"
-                  className="size-1.5 rounded-full"
-                  style={{
-                    backgroundColor: DEPARTMENT_COLORS[employee.department],
-                  }}
-                />
-                {employee.department}
-              </span>
+              <DepartmentBadge department={employee.department} />
             </div>
 
             <div
               data-anim="hero-text"
               className="mt-3 inline-flex items-center gap-1"
             >
-              <code className="rounded-md bg-surface-2 px-2 py-1 font-mono text-xs text-foreground">
+              <code className="rounded-input border border-border bg-transparent px-2 py-1 font-mono text-xs text-foreground">
                 {employee.employeeId}
               </code>
               <CopyButton
@@ -154,14 +138,22 @@ export function EmployeeDetails({
 
           {canEdit ? (
             <div className="flex shrink-0 gap-2">
-              <Button asChild variant="outline">
+              <Button asChild variant="secondary">
                 <Link href={`/employees/${employee.id}/edit`}>
-                  <Pencil className="size-4" aria-hidden="true" />
+                  <Pencil
+                    className="size-4"
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
                   Edit
                 </Link>
               </Button>
-              <Button variant="danger" onClick={onDelete}>
-                <Trash2 className="size-4" aria-hidden="true" />
+              <Button variant="destructive" onClick={onDelete}>
+                <Trash2
+                  className="size-4"
+                  strokeWidth={1.5}
+                  aria-hidden="true"
+                />
                 Delete
               </Button>
             </div>
@@ -238,6 +230,13 @@ export function EmployeeDetails({
         </Card>
       </div>
 
+      {canEdit ? (
+        <LoginAccessCard
+          employeeId={employee.id}
+          employeeName={employee.name}
+        />
+      ) : null}
+
       {/* Timeline */}
       <Card>
         <CardHeader>
@@ -258,7 +257,7 @@ export function EmployeeDetails({
             <li className="relative">
               <span
                 aria-hidden="true"
-                className="absolute -left-[26px] top-1 size-3 rounded-full border-2 border-surface bg-accent"
+                className="absolute -left-[26px] top-1 size-3 rounded-full border-2 border-foreground bg-surface"
               />
               <p className="caption text-muted-foreground">Last updated</p>
               <p className="text-sm font-medium text-foreground">
@@ -275,7 +274,7 @@ export function EmployeeDetails({
           "inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground",
         )}
       >
-        <ArrowLeft className="size-4" aria-hidden="true" />
+        <ArrowLeft className="size-4" strokeWidth={1.5} aria-hidden="true" />
         Back to employees
       </Link>
     </div>

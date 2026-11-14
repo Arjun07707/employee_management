@@ -113,6 +113,7 @@ export function SearchBar({
     >
       <Search
         aria-hidden="true"
+        strokeWidth={1.5}
         className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
       />
       <input
@@ -123,10 +124,11 @@ export function SearchBar({
         placeholder="Search employees…"
         aria-label="Search employees"
         className={cn(
-          "h-10 w-full rounded-input border border-border bg-surface-2 pl-9 pr-9 text-sm text-foreground",
+          "h-11 w-full rounded-input border border-border-strong bg-surface pl-9 pr-9 text-sm text-foreground",
           "placeholder:text-muted-foreground/70",
           "transition-[border-color,background-color] duration-200",
-          "focus:border-primary focus:bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          "hover:border-foreground/40",
+          "focus:border-foreground focus:bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           "[&::-webkit-search-cancel-button]:hidden",
         )}
       />
@@ -137,7 +139,7 @@ export function SearchBar({
           aria-label="Clear search"
           className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <X className="size-4" aria-hidden="true" />
+          <X className="size-4" strokeWidth={1.5} aria-hidden="true" />
         </button>
       ) : null}
     </div>

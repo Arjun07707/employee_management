@@ -71,7 +71,7 @@ export function FilterBar({
           onClick={onClear}
           className="h-10 text-muted-foreground"
         >
-          <X className="size-4" aria-hidden="true" />
+          <X className="size-4" strokeWidth={1.5} aria-hidden="true" />
           Clear filters
         </Button>
       ) : null}

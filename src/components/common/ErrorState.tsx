@@ -33,23 +33,30 @@ export function ErrorState({
     <div
       ref={ref}
       role="alert"
-      className="flex flex-col items-center justify-center gap-4 rounded-card border border-danger/25 bg-danger/5 px-6 py-12 text-center"
+      className="flex flex-col items-center justify-center gap-4 rounded-card border border-border bg-surface px-6 py-12 text-center"
     >
-      <span className="inline-flex size-12 items-center justify-center rounded-full bg-danger/12">
-        <AlertTriangle className="size-6 text-danger" aria-hidden="true" />
-      </span>
+      <AlertTriangle
+        className="size-12 text-muted-foreground"
+        strokeWidth={1.25}
+        aria-hidden="true"
+      />
       <div className="space-y-1">
-        <p className="section-title text-foreground">{title}</p>
+        <p className="font-display text-2xl leading-8 tracking-[-0.02em] text-foreground">
+          {title}
+          <span aria-hidden="true" className="text-highlight">
+            .
+          </span>
+        </p>
         <p className="text-sm text-muted-foreground">{message}</p>
       </div>
       {onRetry ? (
         <Button
           type="button"
-          variant="outline"
+          variant="secondary"
           onClick={onRetry}
           loading={retrying}
         >
-          <RotateCcw className="size-4" aria-hidden="true" />
+          <RotateCcw className="size-4" strokeWidth={1.5} aria-hidden="true" />
           Try again
         </Button>
       ) : null}

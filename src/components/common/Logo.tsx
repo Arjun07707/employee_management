@@ -10,7 +10,7 @@ export interface LogoProps {
   nameClassName?: string;
 }
 
-/** SVG aurora mark — three overlapping rounded shapes forming an "E". */
+/** Ink mark (solid rounded square with paper "E" rules) — optionally followed by a serif wordmark and a single highlight dot. */
 export function Logo({
   size = 32,
   className,
@@ -27,29 +27,28 @@ export function Logo({
         aria-hidden="true"
         className="shrink-0"
       >
-        <defs>
-          <linearGradient id="logo-aurora" x1="0" y1="0" x2="40" y2="40">
-            <stop offset="0%" stopColor="#5B5BD6" />
-            <stop offset="50%" stopColor="#8B5CF6" />
-            <stop offset="100%" stopColor="#14B8A6" />
-          </linearGradient>
-        </defs>
-        <rect width="40" height="40" rx="12" fill="url(#logo-aurora)" />
+        <rect width="40" height="40" rx="12" fill="var(--foreground)" />
         <path
           d="M13 12.5h14M13 20h10M13 27.5h14"
-          stroke="#FFFFFF"
+          stroke="var(--background)"
           strokeWidth="3"
           strokeLinecap="round"
         />
       </svg>
       {withName ? (
-        <span
-          className={cn(
-            "text-base font-bold tracking-tight text-foreground",
-            nameClassName,
-          )}
-        >
-          Employee Management
+        <span className="inline-flex items-center gap-1.5">
+          <span
+            className={cn(
+              "font-display text-base font-normal tracking-tight text-foreground",
+              nameClassName,
+            )}
+          >
+            Employee Management
+          </span>
+          <span
+            aria-hidden="true"
+            className="size-1.5 shrink-0 rounded-full bg-highlight"
+          />
         </span>
       ) : null}
     </span>

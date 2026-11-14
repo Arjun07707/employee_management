@@ -1,21 +1,27 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Instrument_Serif, Geist, Geist_Mono } from "next/font/google";
 
 import { Providers } from "@/providers";
 
 import "./globals.css";
 
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
+const display = Instrument_Serif({
+  variable: "--f-display",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: "400",
+  style: ["normal", "italic"],
   display: "swap",
 });
 
-const jetbrains = JetBrains_Mono({
-  variable: "--font-jetbrains",
+const ui = Geist({
+  variable: "--f-ui",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+const mono = Geist_Mono({
+  variable: "--f-mono",
+  subsets: ["latin"],
   display: "swap",
 });
 
@@ -37,7 +43,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${jakarta.variable} ${jetbrains.variable} h-full`}
+      className={`${display.variable} ${ui.variable} ${mono.variable} h-full`}
     >
       <body className="min-h-full antialiased">
         <Providers>{children}</Providers>

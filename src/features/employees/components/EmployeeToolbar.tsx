@@ -24,7 +24,7 @@ export interface EmployeeToolbarProps {
  */
 export function EmployeeToolbar({ state }: EmployeeToolbarProps) {
   return (
-    <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4 shadow-card lg:flex-row lg:items-center lg:justify-between">
+    <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4 lg:flex-row lg:items-center lg:justify-between">
       <div className="flex flex-1 flex-wrap items-center gap-2">
         <SearchBar value={state.search} onChange={state.setSearch} />
 
@@ -38,7 +38,7 @@ export function EmployeeToolbar({ state }: EmployeeToolbarProps) {
         />
       </div>
 
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 lg:border-l lg:border-border lg:pl-4">
         <span className="caption hidden text-muted-foreground sm:inline">
           Rows
         </span>

@@ -13,9 +13,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar } from "@/components/common/Avatar";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import type { SessionUser } from "@/shared/types/auth";
+import type { SessionUserDTO } from "@/shared/types/account";
 
-export function UserMenu({ user }: { user: SessionUser }) {
+export function UserMenu({ user }: { user: SessionUserDTO }) {
   const { signOut, signingOut } = useAuth(user);
 
   return (
@@ -35,13 +35,13 @@ export function UserMenu({ user }: { user: SessionUser }) {
           <span className="block truncate text-sm font-medium text-foreground">
             {user.name}
           </span>
-          <span className="block truncate text-xs font-normal lowercase">
-            {user.email}
+          <span className="block truncate font-mono text-xs font-normal lowercase">
+            @{user.username}
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem disabled>
-          <UserIcon className="size-4" aria-hidden="true" />
+          <UserIcon className="size-4" strokeWidth={1.5} aria-hidden="true" />
           <span className="capitalize">Role: {user.role}</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -53,7 +53,7 @@ export function UserMenu({ user }: { user: SessionUser }) {
             void signOut();
           }}
         >
-          <LogOut className="size-4" aria-hidden="true" />
+          <LogOut className="size-4" strokeWidth={1.5} aria-hidden="true" />
           {signingOut ? "Signing out…" : "Log out"}
         </DropdownMenuItem>
       </DropdownMenuContent>

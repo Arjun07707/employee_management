@@ -24,6 +24,7 @@ import { Employee, type EmployeeDoc } from "@/server/models/employee.model";
 import { escapeRegex } from "@/server/security/escape-regex";
 import { buildCsv } from "@/server/utils/csv";
 import { toEmployeeDTO, type EmployeeDTOInput } from "@/server/utils/dto";
+import { User } from "@/server/models/user.model";
 
 const SORT_MAP: Record<EmployeeQuery["sortBy"], string> = {
   name: "name",
@@ -189,6 +190,12 @@ export async function deleteEmployee(id: string): Promise<void> {
   ).lean();
 
   if (!document) throw new NotFoundError("Employee not found");
+
+  // Soft-deleting an employee automatically disables their login.
+  await User.updateOne(
+    { employeeRef: id },
+    { $set: { isActive: false }, $inc: { tokenVersion: 1 } },
+  );
 }
 
 export interface EmployeeCsvResult {
@@ -239,4 +246,15 @@ export async function exportEmployeesCsv(
     csv,
     filename: `employees-${new Date().toISOString().slice(0, 10)}.csv`,
   };
+}
+
+export async function getOwnProfile(
+  userId: string,
+): Promise<EmployeeDTO> {
+  const user = await User.findById(userId).select("employeeRef").lean();
+  if (!user || !user.employeeRef) {
+    throw new NotFoundError("Employee record not found");
+  }
+
+  return getEmployeeById(String(user.employeeRef));
 }

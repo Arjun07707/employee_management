@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { EmployeeForm } from "@/features/employees/components/EmployeeForm";
 
 export const metadata: Metadata = { title: "Add Employee" };
+export const dynamic = "force-dynamic";
 
 export default async function NewEmployeePage() {
   const session = await getSession();

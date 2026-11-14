@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils";
 export interface FormSectionProps {
   title: string;
   description?: string;
+  /** Eyebrow index, e.g. "01". Rendered in mono before the title. */
+  index?: string;
   children: React.ReactNode;
   className?: string;
 }
@@ -17,6 +19,7 @@ export interface FormSectionProps {
 export function FormSection({
   title,
   description,
+  index,
   children,
   className,
 }: FormSectionProps) {
@@ -38,14 +41,22 @@ export function FormSection({
     <section
       ref={ref as React.RefObject<HTMLElement>}
       className={cn(
-        "rounded-card border border-border bg-surface p-5 shadow-card sm:p-6",
+        "rounded-card border border-border bg-surface p-5 sm:p-6",
         className,
       )}
     >
       <header className="mb-5">
-        <h2 className="section-title text-foreground">{title}</h2>
+        <h2 className="eyebrow font-sans text-muted-foreground">
+          {index ? (
+            <>
+              <span className="font-mono">{index}</span>
+              <span aria-hidden="true"> / </span>
+            </>
+          ) : null}
+          {title}
+        </h2>
         {description ? (
-          <p className="caption mt-1 text-muted-foreground">{description}</p>
+          <p className="caption mt-1.5 text-muted-foreground">{description}</p>
         ) : null}
       </header>
 

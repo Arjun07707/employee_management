@@ -91,6 +91,15 @@ export async function apiFetch<T>(
     typeof window !== "undefined"
   ) {
     const current = window.location.pathname + window.location.search;
+
+    // Already on the login page: surface the failure without a reload loop.
+    if (current.startsWith("/login")) {
+      throw new ApiError(
+        401,
+        "Session expired. Please sign in again.",
+      );
+    }
+
     const target =
       current.startsWith("/login") || current.startsWith("/api")
         ? "/login"
@@ -136,13 +145,22 @@ export async function apiFetchPaginated<T>(
   const body = (await readBody(response)) as
     ApiPaginated<T> | ApiErrorBody | null;
 
-  if (!response.ok) {
+    if (!response.ok) {
     if (
       response.status === 401 &&
       !skipAuthRedirect &&
       typeof window !== "undefined"
     ) {
       const current = window.location.pathname + window.location.search;
+
+      // Already on the login page: surface the failure without a reload loop.
+      if (current.startsWith("/login")) {
+        throw new ApiError(
+          401,
+          "Session expired. Please sign in again.",
+        );
+      }
+
       window.location.assign(
         current.startsWith("/login")
           ? "/login"

@@ -14,9 +14,19 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { StatusBadge } from "@/features/employees/components/StatusBadge";
-import { DEPARTMENT_COLORS } from "@/shared/constants";
-import { formatDate } from "@/lib/format";
 import type { Employee } from "@/shared/types/employee";
+
+function formatRelativeDate(value: string | Date): string {
+  const date = typeof value === "string" ? new Date(value) : value;
+  if (Number.isNaN(date.getTime())) return "—";
+
+  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+  const days = Math.round((date.getTime() - Date.now()) / 86_400_000);
+
+  if (Math.abs(days) < 30) return rtf.format(days, "day");
+  if (Math.abs(days) < 365) return rtf.format(Math.round(days / 30), "month");
+  return rtf.format(Math.round(days / 365), "year");
+}
 
 export function RecentEmployees({ employees }: { employees: Employee[] }) {
   const listRef = React.useRef<HTMLOListElement>(null);
@@ -91,24 +101,14 @@ export function RecentEmployees({ employees }: { employees: Employee[] }) {
                   </p>
                 </div>
 
-                <span
-                  className="hidden items-center gap-1.5 rounded-full bg-surface-2 px-2.5 py-0.5 text-xs font-medium sm:inline-flex"
-                  style={{ color: DEPARTMENT_COLORS[employee.department] }}
-                >
-                  <span
-                    aria-hidden="true"
-                    className="size-1.5 rounded-full"
-                    style={{
-                      backgroundColor: DEPARTMENT_COLORS[employee.department],
-                    }}
-                  />
+                <span className="hidden items-center rounded-full border border-border px-2.5 py-1 text-xs font-medium text-foreground sm:inline-flex">
                   {employee.department}
                 </span>
 
                 <StatusBadge status={employee.status} />
 
                 <span className="hidden w-24 shrink-0 text-right text-xs text-muted-foreground lg:block">
-                  {formatDate(employee.joiningDate)}
+                  {formatRelativeDate(employee.joiningDate)}
                 </span>
               </Link>
             </li>

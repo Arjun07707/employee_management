@@ -5,15 +5,22 @@ import { withApi } from "@/server/http/with-api";
 import { getClientIp } from "@/server/security/ip";
 import { checkLoginRateLimit } from "@/server/security/rate-limit";
 import { login } from "@/server/services/auth.service";
-import { loginSchema } from "@/shared/schemas/auth.schema";
+import { loginSchema } from "@/shared/schemas/account.schema";
 
 export const POST = withApi({}, async (request) => {
   const input = await parseJson(request, loginSchema);
 
-  checkLoginRateLimit(getClientIp(request), input.email);
+  checkLoginRateLimit(getClientIp(request), input.username);
 
-  const { user, token } = await login(input.email, input.password);
+  const { user, token } = await login(input);
   await setAuthCookie(token);
 
-  return ok(user, "Signed in successfully");
+  const redirectTo =
+    user.mustChangePassword
+      ? "/account?required=1"
+      : user.role === "employee"
+        ? "/me"
+        : "/dashboard";
+
+  return ok({ ...user, redirectTo }, "Signed in successfully");
 });

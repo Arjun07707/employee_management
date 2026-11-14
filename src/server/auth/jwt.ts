@@ -4,7 +4,7 @@ import { jwtVerify, SignJWT } from "jose";
 import { z } from "zod";
 
 import { ROLES } from "@/shared/constants";
-import type { SessionUser } from "@/shared/types/auth";
+import type { SessionUserDTO } from "@/shared/types/account";
 import { env } from "@/server/config/env";
 
 const secretKey = new TextEncoder().encode(env.JWT_SECRET);
@@ -12,15 +12,19 @@ const secretKey = new TextEncoder().encode(env.JWT_SECRET);
 const payloadSchema = z.object({
   sub: z.string().min(1),
   role: z.enum(ROLES),
+  username: z.string().min(1),
   name: z.string().min(1),
-  email: z.string().email(),
+  tv: z.number().int().nonnegative(),
+  mcp: z.boolean(),
 });
 
-export async function signSessionToken(user: SessionUser): Promise<string> {
+export async function signSession(user: SessionUserDTO & { tokenVersion: number }): Promise<string> {
   return new SignJWT({
     role: user.role,
+    username: user.username,
     name: user.name,
-    email: user.email,
+    tv: user.tokenVersion,
+    mcp: user.mustChangePassword,
   })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(user.id)
@@ -29,9 +33,9 @@ export async function signSessionToken(user: SessionUser): Promise<string> {
     .sign(secretKey);
 }
 
-export async function verifySessionToken(
+export async function verifyToken(
   token: string,
-): Promise<SessionUser | null> {
+): Promise<SessionUserDTO | null> {
   try {
     const { payload } = await jwtVerify(token, secretKey, {
       algorithms: ["HS256"],
@@ -42,8 +46,11 @@ export async function verifySessionToken(
     return {
       id: parsed.data.sub,
       role: parsed.data.role,
+      username: parsed.data.username,
       name: parsed.data.name,
-      email: parsed.data.email,
+      mustChangePassword: parsed.data.mcp,
+      employeeRef: null,
+      tv: parsed.data.tv,
     };
   } catch {
     return null;

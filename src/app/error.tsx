@@ -32,13 +32,22 @@ export default function Error({
       <div ref={ref} className="flex flex-col items-center gap-6">
         <span
           data-anim="icon"
-          className="inline-flex size-16 items-center justify-center rounded-full bg-danger/12"
+          className="inline-flex size-16 items-center justify-center"
         >
-          <AlertTriangle className="size-7 text-danger" aria-hidden="true" />
+          <AlertTriangle
+            className="size-16 text-muted-foreground"
+            strokeWidth={1.25}
+            aria-hidden="true"
+          />
         </span>
 
         <div data-anim="text" className="space-y-2">
-          <h1 className="page-title text-foreground">Something went wrong</h1>
+          <h1 className="page-title text-foreground">
+            Something went <em>wrong</em>
+            <span className="text-highlight" aria-hidden="true">
+              .
+            </span>
+          </h1>
           <p className="max-w-md text-sm text-muted-foreground">
             An unexpected error occurred while loading this page. Try again, or
             head back to the dashboard.
@@ -54,9 +63,13 @@ export default function Error({
           <button
             type="button"
             onClick={reset}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-input bg-primary px-4 text-sm font-medium text-white transition-colors hover:bg-primary-hover dark:text-background"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-input bg-primary px-5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
           >
-            <RotateCcw className="size-4" aria-hidden="true" />
+            <RotateCcw
+              className="size-4"
+              strokeWidth={1.5}
+              aria-hidden="true"
+            />
             Try again
           </button>
         </div>

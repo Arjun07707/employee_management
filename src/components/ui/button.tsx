@@ -2,12 +2,19 @@
 
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
-import { Loader2 } from "lucide-react";
+import { ArrowUpRight, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
 type ButtonVariant =
-  "primary" | "secondary" | "outline" | "ghost" | "danger" | "success" | "link";
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "ghost"
+  | "destructive"
+  | "danger"
+  | "success"
+  | "link";
 
 type ButtonSize = "sm" | "md" | "lg" | "icon";
 
@@ -20,23 +27,42 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary:
-    "bg-primary text-white shadow-card hover:bg-primary-hover hover:shadow-card-lg dark:text-background",
+  primary: "bg-primary text-primary-foreground hover:opacity-90",
   secondary:
-    "bg-primary-soft text-primary hover:brightness-95 dark:hover:brightness-125",
-  outline: "border border-border bg-surface text-foreground hover:bg-surface-2",
+    "border border-border-strong bg-surface text-foreground hover:bg-surface-2",
+  outline:
+    "border border-border-strong bg-surface text-foreground hover:bg-surface-2",
   ghost: "text-muted-foreground hover:bg-surface-2 hover:text-foreground",
-  danger: "bg-danger text-white hover:brightness-110 dark:text-background",
-  success: "bg-success text-white hover:brightness-110 dark:text-background",
+  destructive:
+    "border border-primary text-primary hover:bg-primary hover:text-primary-foreground",
+  danger:
+    "border border-primary text-primary hover:bg-primary hover:text-primary-foreground",
+  success: "bg-primary text-primary-foreground hover:opacity-90",
   link: "text-primary underline-offset-4 hover:underline",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
   sm: "h-9 px-3 text-sm gap-1.5",
-  md: "h-10 px-4 text-sm gap-2",
+  md: "h-11 px-4 text-sm gap-2",
   lg: "h-12 px-6 text-base gap-2",
-  icon: "h-10 w-10",
+  icon: "h-11 w-11",
 };
+
+/** Trailing arrow only on solid primary buttons at interactive sizes. */
+function showArrow(
+  variant: ButtonVariant,
+  size: ButtonSize,
+  loading: boolean,
+  asChild: boolean,
+) {
+  return variant === "primary" && (size === "md" || size === "lg") && !loading && !asChild;
+}
+
+const baseClasses = [
+  "group inline-flex shrink-0 items-center justify-center rounded-input",
+  "font-medium leading-5 transition-[background-color,opacity,border-color,box-shadow,transform] duration-200",
+  "disabled:pointer-events-none disabled:opacity-50",
+].join(" ");
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
@@ -54,6 +80,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref,
   ) => {
     const Comp = asChild ? Slot : "button";
+    const withArrow = showArrow(variant, size, loading, asChild);
 
     // asChild must pass the child through untouched (Slot expects exactly one
     // element child), so the loading spinner / label wrapper only exists for
@@ -64,9 +91,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           ref={ref}
           data-slot="button"
           className={cn(
-            "inline-flex shrink-0 items-center justify-center rounded-input font-medium",
-            "transition-[background-color,box-shadow,transform] duration-200",
-            "disabled:pointer-events-none disabled:opacity-50",
+            baseClasses,
             variantClasses[variant],
             sizeClasses[size],
             className,
@@ -83,9 +108,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         data-slot="button"
         className={cn(
-          "inline-flex shrink-0 items-center justify-center rounded-input font-medium",
-          "transition-[background-color,box-shadow,transform] duration-200",
-          "disabled:pointer-events-none disabled:opacity-50",
+          baseClasses,
           variantClasses[variant],
           sizeClasses[size],
           className,
@@ -95,7 +118,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {loading ? (
           <>
-            <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+            <Loader2
+              className="size-4 shrink-0 animate-spin"
+              strokeWidth={1.5}
+              aria-hidden="true"
+            />
             {loadingText ? <span>{loadingText}</span> : null}
           </>
         ) : null}
@@ -108,6 +135,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         >
           {children}
         </span>
+        {withArrow ? (
+          <ArrowUpRight
+            className="size-4 shrink-0 transition-all duration-200 ease-out group-hover:translate-x-[3px] group-hover:text-highlight"
+            strokeWidth={1.5}
+            aria-hidden="true"
+          />
+        ) : null}
       </Comp>
     );
   },

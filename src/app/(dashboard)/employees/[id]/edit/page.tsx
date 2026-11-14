@@ -6,6 +6,7 @@ import { EditEmployeeForm } from "@/features/employees/components/EditEmployeeFo
 import { PageHeader } from "@/components/layout/PageHeader";
 
 export const metadata: Metadata = { title: "Edit Employee" };
+export const dynamic = "force-dynamic";
 
 export default async function EditEmployeePage({
   params,

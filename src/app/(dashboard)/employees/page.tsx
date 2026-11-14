@@ -70,25 +70,36 @@ export default function EmployeesPage() {
   return (
     <div className="space-y-5">
       <PageHeader
-        title="All Employees"
+        title={<em>Employees</em>}
         description="Search, filter and manage your team directory."
         meta={
-          pagination
-            ? `${pagination.total} employee${pagination.total === 1 ? "" : "s"}`
-            : undefined
+          pagination ? (
+            <span className="font-mono">
+              {pagination.total} employee
+              {pagination.total === 1 ? "" : "s"}
+            </span>
+          ) : undefined
         }
         actions={
           <>
-            <Button asChild variant="outline">
+            <Button asChild variant="secondary">
               <a href={exportHref} download>
-                <Download className="size-4" aria-hidden="true" />
+                <Download
+                  className="size-4"
+                  strokeWidth={1.5}
+                  aria-hidden="true"
+                />
                 Export CSV
               </a>
             </Button>
             {canEdit ? (
               <Button asChild>
                 <Link href="/employees/new">
-                  <UserPlus className="size-4" aria-hidden="true" />
+                  <UserPlus
+                    className="size-4"
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
                   Add Employee
                 </Link>
               </Button>
@@ -117,7 +128,7 @@ export default function EmployeesPage() {
       ) : isPending ? (
         <EmployeeTableSkeleton />
       ) : employees.length === 0 ? (
-        <div className="rounded-card border border-border bg-surface shadow-card">
+        <div className="rounded-card border border-border bg-surface">
           <EmptyState
             isEmpty={!isFiltered}
             onClearFilters={isFiltered ? state.clearFilters : undefined}

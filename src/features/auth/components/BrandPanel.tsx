@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { Sparkles, Shield, Zap } from "lucide-react";
 
 import { useMotion } from "@/animations/use-motion";
 import { gsap } from "@/animations/gsap";
@@ -23,7 +24,18 @@ const BULLETS = [
   { icon: "zap", text: "Search, filter and export your team in seconds" },
 ] as const;
 
-/** Decorative gradient panel shown beside the login card on desktop. */
+const ICONS = {
+  sparkles: Sparkles,
+  shield: Shield,
+  zap: Zap,
+} as const;
+
+const RING_DURATIONS = [60, 90, 120] as const;
+
+const PAPER_GRAIN =
+  "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")";
+
+/** Black editorial panel shown beside the login card on desktop. */
 export function BrandPanel({ className }: BrandPanelProps) {
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -32,16 +44,15 @@ export function BrandPanel({ className }: BrandPanelProps) {
       const root = ref.current;
       if (!root) return;
 
-      // Floating gradient blobs (infinite yoyo).
-      const blobs = root.querySelectorAll<HTMLElement>("[data-anim='blob']");
-      blobs.forEach((blob, index) => {
-        gsap.to(blob, {
-          y: index % 2 === 0 ? -32 : 28,
-          x: index % 2 === 0 ? 18 : -22,
-          duration: 6 + index * 1.5,
-          ease: "sine.inOut",
+      // Concentric rings rotate forever at different speeds; the middle ring
+      // carries the orbiting highlight dot.
+      const rings = root.querySelectorAll<HTMLElement>("[data-anim='ring']");
+      rings.forEach((ring, index) => {
+        gsap.to(ring, {
+          rotation: 360,
+          duration: RING_DURATIONS[index] ?? 90,
+          ease: "none",
           repeat: -1,
-          yoyo: true,
         });
       });
 
@@ -67,43 +78,49 @@ export function BrandPanel({ className }: BrandPanelProps) {
       ref={ref}
       aria-hidden="true"
       className={cn(
-        "relative hidden flex-1 overflow-hidden brand-gradient p-12 text-white lg:flex lg:flex-col lg:justify-between",
+        "relative hidden flex-1 overflow-hidden bg-[#0A0A0A] p-12 text-white lg:flex lg:flex-col lg:justify-between",
         className,
       )}
     >
-      {/* Floating blobs */}
+      {/* Paper grain */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-screen"
+        style={{ backgroundImage: PAPER_GRAIN }}
+      />
+
+      {/* Concentric rings */}
       <div className="pointer-events-none absolute inset-0">
-        <div
-          data-anim="blob"
-          className="absolute -left-16 top-10 size-72 rounded-full bg-white/15 blur-2xl animate-blob"
-        />
-        <div
-          data-anim="blob"
-          className="absolute right-0 top-1/3 size-96 rounded-full bg-white/10 blur-3xl animate-blob"
-        />
-        <div
-          data-anim="blob"
-          className="absolute -bottom-20 left-1/3 size-80 rounded-full bg-white/10 blur-3xl animate-blob"
-        />
+        <div className="absolute left-1/2 top-1/2 size-[420px] -translate-x-1/2 -translate-y-1/2">
+          <div
+            data-anim="ring"
+            className="size-full rounded-full border border-white/8"
+          />
+        </div>
+        <div className="absolute left-1/2 top-1/2 size-[640px] -translate-x-1/2 -translate-y-1/2">
+          <div
+            data-anim="ring"
+            className="relative size-full rounded-full border border-white/8"
+          >
+            <span className="absolute left-1/2 top-0 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-highlight" />
+          </div>
+        </div>
+        <div className="absolute left-1/2 top-1/2 size-[860px] -translate-x-1/2 -translate-y-1/2">
+          <div
+            data-anim="ring"
+            className="size-full rounded-full border border-white/8"
+          />
+        </div>
       </div>
 
-      <div className="relative z-10 flex items-center gap-3">
-        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-          <rect width="40" height="40" rx="12" fill="rgba(255,255,255,0.18)" />
-          <path
-            d="M13 12.5h14M13 20h10M13 27.5h14"
-            stroke="#FFFFFF"
-            strokeWidth="3"
-            strokeLinecap="round"
-          />
-        </svg>
-        <span className="text-lg font-bold tracking-tight">
+      <div className="relative z-10 flex items-center gap-2.5">
+        <span className="font-display text-xl tracking-tight text-white">
           Employee Management
         </span>
+        <span className="size-1.5 rounded-full bg-highlight" />
       </div>
 
       <div className="relative z-10 max-w-md">
-        <h1 className="text-4xl font-bold leading-tight tracking-tight">
+        <h1 className="font-display text-4xl leading-[1.05] tracking-tight md:text-5xl lg:text-6xl">
           <span data-anim="word" className="inline-block">
             Manage
           </span>{" "}
@@ -113,36 +130,37 @@ export function BrandPanel({ className }: BrandPanelProps) {
           <span data-anim="word" className="inline-block">
             people,
           </span>{" "}
-          <span data-anim="word" className="inline-block italic">
-            effortlessly.
+          <span data-anim="word" className="inline-block">
+            <em>effortlessly.</em>
           </span>
         </h1>
+
+        <ul className="mt-8 space-y-4">
+          {BULLETS.map((bullet) => {
+            const Icon = ICONS[bullet.icon];
+            return (
+              <li
+                key={bullet.text}
+                data-anim="bullet"
+                className="flex items-start gap-3"
+              >
+                <Icon
+                  className="mt-0.5 size-[18px] shrink-0 text-white/70"
+                  strokeWidth={1.5}
+                  aria-hidden="true"
+                />
+                <span className="text-sm leading-6 text-white/70">
+                  {bullet.text}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
       </div>
 
-      <ul className="relative z-10 space-y-4">
-        {BULLETS.map((bullet) => (
-          <li
-            key={bullet.text}
-            data-anim="bullet"
-            className="flex items-start gap-3"
-          >
-            <span className="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-white/20">
-              <svg
-                className="size-3.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M20 6 9 17l-5-5" />
-              </svg>
-            </span>
-            <span className="text-sm text-white/90">{bullet.text}</span>
-          </li>
-        ))}
-      </ul>
+      <div className="relative z-10 text-xs text-white/55">
+        © 2026 Employee Management
+      </div>
     </div>
   );
 }

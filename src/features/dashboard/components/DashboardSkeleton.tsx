@@ -14,9 +14,14 @@ export function DashboardSkeleton() {
             key={index}
             className="rounded-card border border-border bg-surface p-5 shadow-card"
           >
-            <Skeleton className="size-11 rounded-input" />
-            <Skeleton className="mt-4 h-9 w-20" />
-            <Skeleton className="mt-2 h-4 w-28" />
+            <div className="flex items-start justify-between gap-4">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="size-4" />
+            </div>
+            <div className="mt-4 border-t border-border pt-4">
+              <Skeleton className="h-12 w-24" />
+              <Skeleton className="mt-2 h-4 w-28" />
+            </div>
           </div>
         ))}
       </div>
@@ -30,7 +35,7 @@ export function DashboardSkeleton() {
               {Array.from({ length: 8 }).map((_, index) => (
                 <Skeleton
                   key={index}
-                  className="flex-1 rounded-t-md"
+                  className="flex-1 rounded-t-[4px]"
                   style={{ height: `${30 + ((index * 17) % 60)}%` }}
                 />
               ))}

@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { useMotion } from "@/animations/use-motion";
 import { countUp } from "@/animations/count-up";
+import { cn } from "@/lib/utils";
 
 export interface CountUpProps {
   value: number;
@@ -35,7 +36,7 @@ export function CountUp({
   );
 
   return (
-    <span ref={ref} className={className}>
+    <span ref={ref} className={cn("inline-block tabular", className)}>
       {format(0)}
     </span>
   );

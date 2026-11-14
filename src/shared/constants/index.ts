@@ -37,22 +37,38 @@ export const MAX_PAGE_SIZE = 100;
 export const MAX_EXPORT_ROWS = 10_000;
 export const MAX_FUTURE_JOINING_DAYS = 30;
 
-export const ROLES = ["admin", "viewer"] as const;
+export const ROLES = ["admin", "viewer", "employee"] as const;
 
 export type Role = (typeof ROLES)[number];
-
-export const DEPARTMENT_COLORS: Record<Department, string> = {
-  Engineering: "#5B5BD6",
-  HR: "#14B8A6",
-  Finance: "#F59E0B",
-  Sales: "#EC4899",
-  Marketing: "#3B82F6",
-  Operations: "#8B5CF6",
-  Support: "#22C55E",
-  Design: "#F97316",
-};
 
 export const EMPLOYEE_ID_PREFIX = "EMP";
 export const EMPLOYEE_COUNTER_ID = "employee";
 export const AUTH_COOKIE_NAME = "ems_token";
 export const DEFAULT_JWT_EXPIRES_IN = "7d";
+
+export const USERNAME_MIN = 3;
+export const USERNAME_MAX = 30;
+export const USERNAME_CHECK_DEBOUNCE_MS = 500;
+export const FORCE_PASSWORD_CHANGE_ON_FIRST_LOGIN = true;
+
+export const RESERVED_USERNAMES = [
+  "admin",
+  "administrator",
+  "root",
+  "system",
+  "support",
+  "help",
+  "api",
+  "null",
+  "undefined",
+  "me",
+  "account",
+  "login",
+  "logout",
+  "employees",
+  "dashboard",
+  "hr",
+  "staff",
+  "owner",
+  "superuser",
+] as const;

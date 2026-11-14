@@ -48,7 +48,7 @@ export function Tooltip({
           role="tooltip"
           aria-hidden="true"
           className={cn(
-            "pointer-events-none absolute z-50 whitespace-nowrap rounded-md bg-foreground px-2 py-1 text-xs font-medium text-background shadow-card animate-fade-in",
+            "pointer-events-none absolute z-50 whitespace-nowrap rounded-input border border-border bg-surface px-2 py-1 text-xs font-medium text-foreground shadow-card-md animate-fade-in",
             positions[side],
           )}
         >

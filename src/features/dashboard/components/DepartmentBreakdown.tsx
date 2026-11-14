@@ -15,7 +15,6 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { DEPARTMENT_COLORS } from "@/shared/constants";
 import type { DepartmentStat } from "@/shared/types/employee";
 import { formatINR } from "@/lib/format";
 
@@ -24,6 +23,7 @@ export function DepartmentBreakdown({ data }: { data: DepartmentStat[] }) {
   const listRef = React.useRef<HTMLOListElement>(null);
 
   const total = data.reduce((sum, item) => sum + item.count, 0);
+  const top = data.reduce((m, d, i, a) => (d.count > a[m].count ? i : m), 0);
 
   useMotion(
     () => {
@@ -52,9 +52,9 @@ export function DepartmentBreakdown({ data }: { data: DepartmentStat[] }) {
 
       <CardContent className="flex-1">
         <ol ref={listRef} className="space-y-4">
-          {data.map((item) => {
+          {data.map((item, i) => {
             const pct = total === 0 ? 0 : (item.count / total) * 100;
-            const color = DEPARTMENT_COLORS[item.department];
+            const isTop = i === top;
 
             return (
               <li key={item.department}>
@@ -68,12 +68,7 @@ export function DepartmentBreakdown({ data }: { data: DepartmentStat[] }) {
                   className="group block w-full rounded-md p-1 text-left transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <div className="flex items-baseline justify-between gap-3">
-                    <span className="flex items-center gap-2 text-sm font-medium text-foreground">
-                      <span
-                        aria-hidden="true"
-                        className="size-2 rounded-full"
-                        style={{ backgroundColor: color }}
-                      />
+                    <span className="text-sm font-medium text-foreground">
                       {item.department}
                     </span>
                     <span className="caption text-muted-foreground">
@@ -82,8 +77,11 @@ export function DepartmentBreakdown({ data }: { data: DepartmentStat[] }) {
                   </div>
 
                   <div className="mt-2 flex items-center gap-3">
-                    <AnimatedProgress value={pct} color={color} />
-                    <span className="w-8 shrink-0 text-right text-sm font-semibold tabular-nums text-foreground">
+                    <AnimatedProgress
+                      value={pct}
+                      color={isTop ? "var(--highlight)" : "var(--foreground)"}
+                    />
+                    <span className="w-8 shrink-0 text-right text-sm font-semibold tabular-nums font-mono text-foreground">
                       <CountUp value={item.count} />
                     </span>
                   </div>

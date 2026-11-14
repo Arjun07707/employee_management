@@ -29,17 +29,29 @@ export function EmptyState({ isEmpty, onClearFilters }: EmptyStateProps) {
       ref={ref}
       className="flex flex-col items-center justify-center gap-4 px-6 py-16 text-center"
     >
-      <span className="inline-flex size-16 items-center justify-center rounded-full bg-primary-soft animate-float">
+      <span
+        className="inline-flex animate-float text-muted-foreground"
+        aria-hidden="true"
+      >
         {isEmpty ? (
-          <UserPlus className="size-7 text-primary" aria-hidden="true" />
+          <UserPlus className="size-16" strokeWidth={1.25} />
         ) : (
-          <SearchX className="size-7 text-primary" aria-hidden="true" />
+          <SearchX className="size-16" strokeWidth={1.25} />
         )}
       </span>
 
       <div className="space-y-1">
-        <p className="section-title text-foreground">
-          {isEmpty ? "No employees yet" : "No results match your filters"}
+        <p className="page-title text-foreground">
+          {isEmpty ? (
+            <>
+              No employees <em>yet</em>
+            </>
+          ) : (
+            <>
+              No results <em>match</em> your filters
+            </>
+          )}
+          <span className="text-highlight">.</span>
         </p>
         <p className="text-sm text-muted-foreground">
           {isEmpty
@@ -51,12 +63,12 @@ export function EmptyState({ isEmpty, onClearFilters }: EmptyStateProps) {
       {isEmpty ? (
         <Button asChild>
           <Link href="/employees/new">
-            <UserPlus className="size-4" aria-hidden="true" />
+            <UserPlus className="size-4" strokeWidth={1.5} aria-hidden="true" />
             Add Employee
           </Link>
         </Button>
       ) : onClearFilters ? (
-        <Button type="button" variant="outline" onClick={onClearFilters}>
+        <Button type="button" variant="secondary" onClick={onClearFilters}>
           Clear filters
         </Button>
       ) : null}

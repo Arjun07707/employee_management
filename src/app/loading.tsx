@@ -5,7 +5,7 @@ export default function Loading() {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Sidebar placeholder */}
-      <div className="hidden w-[264px] shrink-0 border-r border-border bg-surface p-4 lg:block">
+      <div className="hidden w-[264px] shrink-0 border-r border-border bg-background p-4 lg:block">
         <Skeleton className="h-9 w-40" />
         <div className="mt-8 space-y-3">
           <Skeleton className="h-3 w-20" />
@@ -20,7 +20,7 @@ export default function Loading() {
       </div>
 
       <div className="flex-1">
-        <div className="flex h-16 items-center justify-between border-b border-border bg-surface/80 px-6">
+        <div className="flex h-16 items-center justify-between border-b border-border bg-background/80 px-6">
           <div className="space-y-1.5">
             <Skeleton className="h-3.5 w-28" />
             <Skeleton className="h-2.5 w-20" />

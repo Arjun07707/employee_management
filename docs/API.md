@@ -6,7 +6,7 @@ process as the app, so a single `npm run dev` serves both the API and the UI.
 - **Base URL (development):** `http://localhost:3000`
 - **Content type:** `application/json` for requests and responses (except CSV export)
 - **Auth:** JWT in the httpOnly `ems_token` cookie, set by `POST /api/auth/login`
-- **Roles:** `admin` (full access) and `viewer` (read-only)
+- **Roles:** `admin` (full access), `viewer` (read-only), `employee` (own profile only)
 
 Every JSON response uses one of these envelopes:
 
@@ -38,7 +38,7 @@ Every JSON response uses one of these envelopes:
 ```
 
 `message` is omitted on some success responses (for example list and detail
-reads). `errors` is only present for validation and duplicate-email failures.
+reads). `errors` is only present for validation and duplicate-username failures.
 
 ## Status codes
 
@@ -50,7 +50,7 @@ reads). `errors` is only present for validation and duplicate-email failures.
 | `401` | Missing, invalid, or expired session                         |
 | `403` | Authenticated but the role is not allowed                    |
 | `404` | Resource not found (including soft-deleted employees)        |
-| `409` | Duplicate email                                              |
+| `409` | Duplicate username                                      |
 | `429` | Rate limit exceeded (includes `Retry-After`)                 |
 | `500` | Unexpected server error                                      |
 | `503` | Health check only: database unavailable                      |
@@ -62,7 +62,7 @@ Every API response includes an `x-request-id` header. Send your own
 
 | Scope | Limit                   | Key               |
 | ----- | ----------------------- | ----------------- |
-| Login | 5 attempts / 15 minutes | client IP + email |
+| Login | 5 attempts / 15 minutes | client IP + username |
 | API   | 120 requests / minute   | client IP         |
 
 Exceeding a limit returns `429` with a `Retry-After` header (seconds). The
@@ -123,15 +123,15 @@ current user.
 ```bash
 curl -i -c cookies.txt -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@example.com","password":"Admin@12345"}'
+  -d '{"username":"admin","password":"Admin@12345"}'
 ```
 
 Request body:
 
-| Field      | Type   | Rules                   |
-| ---------- | ------ | ----------------------- |
-| `email`    | string | valid email, lowercased |
-| `password` | string | 8–128 characters        |
+| Field      | Type   | Rules                    |
+| ---------- | ------ | ------------------------ |
+| `username` | string | 3–30 chars, lowercased   |
+| `password` | string | 8–128 characters         |
 
 ```json
 {
@@ -139,9 +139,10 @@ Request body:
   "message": "Signed in successfully",
   "data": {
     "id": "6ae2fef069eb0fcc7ab0c30d",
-    "name": "Admin",
-    "email": "admin@example.com",
-    "role": "admin"
+    "name": "Administrator",
+    "username": "admin",
+    "role": "admin",
+    "mustChangePassword": false
   }
 }
 ```
@@ -149,8 +150,8 @@ Request body:
 Failures:
 
 - `400` — invalid body.
-- `401` — `{"success":false,"message":"Invalid email or password"}` (the same
-  message for unknown emails, wrong passwords, and inactive accounts).
+- `401` — `{"success":false,"message":"Invalid username or password"}` (the same
+  message for unknown usernames, wrong passwords, and inactive accounts).
 - `429` — too many attempts; honour `Retry-After`.
 
 ### `POST /api/auth/logout`
@@ -182,16 +183,109 @@ curl -b cookies.txt http://localhost:3000/api/auth/me
   "success": true,
   "data": {
     "id": "...",
-    "name": "Admin",
-    "email": "admin@example.com",
-    "role": "admin"
+    "name": "Administrator",
+    "username": "admin",
+    "role": "admin",
+    "mustChangePassword": false
   }
 }
 ```
 
 `401` when the cookie is missing, malformed, or expired.
 
+### `GET /api/auth/username-available`
+
+Public, rate-limited. Returns whether a username is available to register.
+Suggests alternatives when taken.
+
+```bash
+curl -b cookies.txt "http://localhost:3000/api/auth/username-available?username=priya"
+```
+
+Query: `username` (required), optional `forEmployee` (exclude the current
+employee's own username when checking).
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "available": true,
+    "reason": "ok",
+    "message": "priya is available"
+  }
+}
+```
+
+When taken:
+
+```json
+{
+  "success": true,
+  "data": {
+    "available": false,
+    "reason": "taken",
+    "message": "priya is already taken",
+    "suggestions": ["priya12", "priya.99", "priya24"]
+  }
+}
+```
+
+### `POST /api/auth/change-credentials`
+
+Returns `200` on success and sets a fresh `ems_token` cookie.
+
+Request body:
+
+| Field          | Type      | Rules                                             |
+| -------------- | --------- | ------------------------------------------------- |
+| `currentPassword` | string   | required                                          |
+| `newUsername`    | string?   | 3–30 chars, lowercased                            |
+| `newPassword`    | string?   | 8–72 chars, must differ from `currentPassword`    |
+| `confirmPassword`| string?   | must equal `newPassword` when `newPassword` set   |
+
+At least one of `newUsername` or `newPassword` is required.
+
+```json
+{
+  "success": true,
+  "message": "Credentials updated successfully",
+  "data": null
+}
+```
+
+Failures: `400` validation, `401` wrong current password, `409` username taken.
+
 ---
+
+## Employee login accounts
+
+### `GET /api/employees/:id/account`
+
+Role: `admin`. Returns the employee's login account or `404` when none exists.
+
+### `POST /api/employees/:id/account`
+
+Role: `admin`. Creates a login account for the employee.
+
+Request body:
+
+| Field              | Type   | Rules                     |
+| ------------------ | ------ | ------------------------- |
+| `username`         | string | required, 3–30 chars      |
+| `password`         | string | required, 8–72 chars      |
+| `mustChangePassword`| boolean | optional, defaults `true` |
+
+Returns `201`. `409` when the employee already has a login or the username is taken.
+
+### `PATCH /api/employees/:id/account`
+
+Role: `admin`. Updates username, password, and/or `isActive`. Changing the
+password bumps the employee's token version, invalidating existing sessions.
+
+---
+
 
 ## Employees
 
@@ -401,6 +495,6 @@ contains the five most recently created non-deleted employees.
 - Request bodies are sanitized: keys starting with `$` or containing `.` are
   rejected so operators cannot be injected through JSON.
 - Mongo duplicate-key errors (`code: 11000`) are mapped to `409` with a
-  field-level `email` error.
+  field-level `username` error.
 - In production, unexpected errors return a generic message; the real error is
   logged server-side together with the request id.

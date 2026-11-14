@@ -62,13 +62,14 @@ export function StatsGrid({
       className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
       stagger={0.08}
     >
-      {items.map((item) => (
+      {items.map((item, index) => (
         <StatCard
           key={item.key}
           label={item.label}
           value={item.value}
           icon={item.icon}
           tone={item.tone}
+          index={index + 1}
           loading={loading}
         />
       ))}

@@ -12,6 +12,9 @@ import {
   type CreateEmployeeInput,
   type UpdateEmployeeInput,
 } from "@/shared/schemas/employee.schema";
+import { createAccountForEmployee } from "@/features/employee-access/api";
+import { passwordSchema } from "@/shared/schemas/account.schema";
+import { useUsernameAvailability } from "@/hooks/use-username-availability";
 import { DEPARTMENTS, EMPLOYEE_STATUSES } from "@/shared/constants";
 import type { Department, EmployeeStatus } from "@/shared/constants";
 import { STATUS_LABELS, toDateInputValue, formatINR } from "@/lib/format";
@@ -32,6 +35,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { UsernameField } from "@/components/forms/UsernameField";
+import { PasswordField } from "@/components/forms/PasswordField";
+import { PasswordStrength } from "@/components/forms/PasswordStrength";
 import type { Employee } from "@/shared/types/employee";
 
 /**
@@ -59,8 +65,12 @@ export interface EmployeeFormProps {
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
   return (
-    <p className="caption mt-1.5 flex items-center gap-1.5 text-danger animate-slide-down">
-      <AlertCircle className="size-3.5 shrink-0" aria-hidden="true" />
+    <p className="caption mt-1.5 flex items-center gap-1.5 text-highlight-ink animate-slide-down">
+      <AlertCircle
+        className="size-4 shrink-0"
+        strokeWidth={1.5}
+        aria-hidden="true"
+      />
       {message}
     </p>
   );
@@ -117,6 +127,17 @@ export function EmployeeForm({ mode, employee, onSaved }: EmployeeFormProps) {
   // Bumped when a submit fails client validation; shakes the errored fields.
   const [invalidSignal, setInvalidSignal] = React.useState(0);
 
+  // Login provisioning (create mode only).
+  const [createLogin, setCreateLogin] = React.useState(true);
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [mustChangePassword, setMustChangePassword] = React.useState(true);
+  const [loginError, setLoginError] = React.useState<string | null>(null);
+
+  const usernameStatus = useUsernameAvailability(username, {
+    enabled: createLogin && mode === "create",
+  });
+
   useMotion(
     () => {
       if (invalidSignal === 0 || !formRef.current) return;
@@ -145,6 +166,20 @@ export function EmployeeForm({ mode, employee, onSaved }: EmployeeFormProps) {
 
   const onSubmit = handleSubmit(
     async (values) => {
+      if (mode === "create" && createLogin) {
+        if (!username.trim()) {
+          setLoginError("Enter a username for the login account.");
+          return;
+        }
+        if (!passwordSchema.safeParse(password).success) {
+          setLoginError(
+            "Password must be at least 8 characters and include an uppercase letter, a lowercase letter and a number.",
+          );
+          return;
+        }
+      }
+      setLoginError(null);
+
       const input = {
         ...values,
         joiningDate: values.joiningDate,
@@ -161,6 +196,26 @@ export function EmployeeForm({ mode, employee, onSaved }: EmployeeFormProps) {
             ? `${result.name} added to the directory`
             : `${result.name} updated`,
         );
+
+        if (mode === "create" && createLogin && username.trim()) {
+          try {
+            await createAccountForEmployee(result.id, {
+              username,
+              password,
+              mustChangePassword,
+            });
+            toast.success(`Login created for ${result.name}`);
+          } catch (error) {
+            if (error instanceof ApiError) {
+              toast.error(error.message);
+            } else {
+              toast.error(
+                "Employee created, but login provisioning failed. You can add it from the employee details page.",
+              );
+            }
+          }
+        }
+
         onSaved?.(result);
         router.push(`/employees/${result.id}`);
         router.refresh();
@@ -188,7 +243,11 @@ export function EmployeeForm({ mode, employee, onSaved }: EmployeeFormProps) {
     <>
       <form ref={formRef} onSubmit={onSubmit} noValidate className="space-y-5">
         {/* 1. Personal */}
-        <FormSection title="Personal" description="Basic contact details">
+        <FormSection
+          index="01"
+          title="Personal"
+          description="Basic contact details"
+        >
           <div data-field>
             <Label htmlFor="name">Full name</Label>
             <Input
@@ -228,7 +287,11 @@ export function EmployeeForm({ mode, employee, onSaved }: EmployeeFormProps) {
         </FormSection>
 
         {/* 2. Job */}
-        <FormSection title="Job" description="Role and joining details">
+        <FormSection
+          index="02"
+          title="Job"
+          description="Role and joining details"
+        >
           <div data-field>
             <Label>Department</Label>
             <Controller
@@ -309,7 +372,11 @@ export function EmployeeForm({ mode, employee, onSaved }: EmployeeFormProps) {
         </FormSection>
 
         {/* 3. Compensation */}
-        <FormSection title="Compensation" description="Salary in INR per annum">
+        <FormSection
+          index="03"
+          title="Compensation"
+          description="Salary in INR per annum"
+        >
           <div data-field className="sm:col-span-2">
             <Label htmlFor="salary">Salary</Label>
             <div className="relative mt-1.5">
@@ -336,13 +403,111 @@ export function EmployeeForm({ mode, employee, onSaved }: EmployeeFormProps) {
           </div>
         </FormSection>
 
+        {mode === "create" && (
+          <FormSection
+            index="04"
+            title="Login access"
+            description="Provision sign-in credentials for the new employee."
+          >
+            <div data-field>
+              <Label htmlFor="createLogin">
+                Create login account for this employee
+              </Label>
+              <div className="mt-1.5 flex items-center gap-2">
+                <input
+                  id="createLogin"
+                  type="checkbox"
+                  checked={createLogin}
+                  onChange={(e) => {
+                    setCreateLogin(e.target.checked);
+                    if (!e.target.checked) setLoginError(null);
+                  }}
+                  className="rounded border-input bg-surface text-primary"
+                />
+                <span className="text-sm text-muted-foreground">
+                  Disable if the employee should not sign in yet.
+                </span>
+              </div>
+            </div>
+
+            {createLogin ? (
+              <>
+                {loginError ? (
+                  <p
+                    role="alert"
+                    className="caption flex items-center gap-1.5 text-highlight-ink"
+                  >
+                    <AlertCircle
+                      className="size-3.5 shrink-0"
+                      strokeWidth={1.5}
+                      aria-hidden="true"
+                    />
+                    {loginError}
+                  </p>
+                ) : null}
+                <div data-field>
+                  <UsernameField
+                    id="newLoginUsername"
+                    value={username}
+                    onChange={setUsername}
+                    error={
+                      usernameStatus.isBlocking
+                        ? usernameStatus.message
+                        : undefined
+                    }
+                  />
+                  {!usernameStatus.isOk &&
+                    usernameStatus.suggestions.length > 0 && (
+                      <p className="caption mt-1 font-mono text-muted-foreground">
+                        Suggestions:{" "}
+                        {usernameStatus.suggestions
+                          .map((s) => `@${s}`)
+                          .join(", ")}
+                      </p>
+                    )}
+                </div>
+
+                <div data-field>
+                  <PasswordField
+                    id="newLoginPassword"
+                    value={password}
+                    onChange={setPassword}
+                    placeholder="••••••••"
+                    error={
+                      password.length > 0 && password.length < 8
+                        ? "Password must be at least 8 characters"
+                        : undefined
+                    }
+                    showToggle
+                  />
+                  <PasswordStrength password={password} />
+                </div>
+
+                <div data-field className="mt-1.5 flex items-center gap-2">
+                  <input
+                    id="mustChangePassword"
+                    type="checkbox"
+                    checked={mustChangePassword}
+                    onChange={(e) => setMustChangePassword(e.target.checked)}
+                    className="rounded border-input bg-surface text-primary"
+                  />
+                  <Label htmlFor="mustChangePassword" className="ml-2 text-sm">
+                    Require password change on first sign-in
+                  </Label>
+                </div>
+              </>
+            ) : null}
+          </FormSection>
+        )}
+
         {mutation.isError && !Object.keys(errors).length ? (
           <div
             role="alert"
-            className="flex items-start gap-2.5 rounded-input border border-danger/30 bg-danger/8 px-3.5 py-3 text-sm text-danger"
+            className="flex items-start gap-2.5 rounded-input border border-border bg-surface px-3.5 py-3 text-sm text-highlight-ink"
           >
             <AlertTriangle
               className="mt-0.5 size-4 shrink-0"
+              strokeWidth={1.5}
               aria-hidden="true"
             />
             <span>
@@ -354,7 +519,7 @@ export function EmployeeForm({ mode, employee, onSaved }: EmployeeFormProps) {
         ) : null}
 
         {/* Sticky action bar */}
-        <div className="sticky bottom-4 z-10 flex flex-col-reverse gap-2 rounded-card border border-border bg-surface/90 p-3 backdrop-blur-md shadow-card-md sm:flex-row sm:justify-end">
+        <div className="sticky bottom-0 z-10 flex flex-col-reverse gap-2 border-t border-border bg-background/95 py-3 backdrop-blur-md sm:flex-row sm:justify-end">
           <Button
             type="button"
             variant="ghost"

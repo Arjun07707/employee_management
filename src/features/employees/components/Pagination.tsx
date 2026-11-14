@@ -93,9 +93,13 @@ export function Pagination({
           onClick={() => onPageChange(page - 1)}
           disabled={page <= 1}
           aria-label="Previous page"
-          className="inline-flex size-9 items-center justify-center rounded-input border border-border bg-surface text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="inline-flex size-9 items-center justify-center rounded-input border border-border-strong bg-surface text-foreground transition-colors hover:bg-surface-2 disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <ChevronLeft className="size-4" aria-hidden="true" />
+          <ChevronLeft
+            className="size-4"
+            strokeWidth={1.5}
+            aria-hidden="true"
+          />
         </button>
 
         {range.map((item, index) =>
@@ -119,12 +123,18 @@ export function Pagination({
               className={cn(
                 "relative inline-flex h-9 min-w-9 items-center justify-center rounded-input px-2 text-sm font-medium transition-colors",
                 item === page
-                  ? "bg-primary text-white dark:text-background"
+                  ? "text-foreground"
                   : "text-muted-foreground hover:bg-surface-2 hover:text-foreground",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               )}
             >
               {item}
+              {item === page ? (
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-x-1.5 bottom-1.5 h-0.5 bg-highlight"
+                />
+              ) : null}
             </button>
           ),
         )}
@@ -134,9 +144,13 @@ export function Pagination({
           onClick={() => onPageChange(page + 1)}
           disabled={page >= totalPages}
           aria-label="Next page"
-          className="inline-flex size-9 items-center justify-center rounded-input border border-border bg-surface text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="inline-flex size-9 items-center justify-center rounded-input border border-border-strong bg-surface text-foreground transition-colors hover:bg-surface-2 disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <ChevronRight className="size-4" aria-hidden="true" />
+          <ChevronRight
+            className="size-4"
+            strokeWidth={1.5}
+            aria-hidden="true"
+          />
         </button>
       </nav>
     </div>

@@ -12,20 +12,22 @@ async function main(): Promise<void> {
   const passwordHash = await bcrypt.hash(env.ADMIN_PASSWORD, 12);
 
   const admin = await User.findOneAndUpdate(
-    { email: env.ADMIN_EMAIL },
+    { username: env.ADMIN_USERNAME },
     {
       $set: {
-        name: "Admin",
-        email: env.ADMIN_EMAIL,
+        name: "Administrator",
+        username: env.ADMIN_USERNAME,
         passwordHash,
         role: "admin",
         isActive: true,
+        mustChangePassword: false,
+        employeeRef: null,
       },
     },
     { upsert: true, returnDocument: "after", setDefaultsOnInsert: true },
   ).lean();
 
-  console.log(`Admin account ready: ${admin?.email}`);
+  console.log(`Admin account ready: ${admin?.username}`);
 }
 
 main()

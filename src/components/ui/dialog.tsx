@@ -25,7 +25,7 @@ export const DialogContent = React.forwardRef<
 ) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm animate-fade-in" />
+      <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-foreground/50 backdrop-blur-[2px] animate-fade-in" />
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
@@ -42,7 +42,7 @@ export const DialogContent = React.forwardRef<
             aria-label="Close dialog"
             className="absolute right-4 top-4 rounded-md p-1 text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <X className="size-4" />
+            <X className="size-4" strokeWidth={1.5} />
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Content>

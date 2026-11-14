@@ -10,7 +10,7 @@ import { EASE, DUR } from "@/animations/presets";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { UserMenu } from "@/components/layout/UserMenu";
-import type { SessionUser } from "@/shared/types/auth";
+import type { SessionUserDTO } from "@/shared/types/account";
 import { cn } from "@/lib/utils";
 
 const TITLES: Record<string, string> = {
@@ -35,7 +35,7 @@ function breadcrumbForPath(pathname: string): string[] {
   return [title];
 }
 
-export function Navbar({ user }: { user: SessionUser }) {
+export function Navbar({ user }: { user: SessionUserDTO }) {
   const pathname = usePathname();
   const ref = React.useRef<HTMLElement>(null);
   const [scrolled, setScrolled] = React.useState(false);
@@ -55,8 +55,8 @@ export function Navbar({ user }: { user: SessionUser }) {
       if (!el) return;
       gsap.to(el, {
         boxShadow: scrolled
-          ? "0 8px 24px -12px rgba(15,21,48,0.18)"
-          : "0 0px 0px 0px rgba(15,21,48,0)",
+          ? "0 8px 24px -12px rgba(10,10,10,0.18)"
+          : "0 0px 0px 0px rgba(10,10,10,0)",
         duration: DUR.fast,
         ease: EASE.snappy,
       });
@@ -70,7 +70,7 @@ export function Navbar({ user }: { user: SessionUser }) {
     <header
       ref={ref}
       className={cn(
-        "sticky top-0 z-20 flex h-16 items-center gap-3 border-b bg-surface/80 px-4 backdrop-blur-md transition-colors sm:px-6",
+        "sticky top-0 z-20 flex h-16 items-center gap-3 border-b bg-background/80 px-4 backdrop-blur-md transition-colors sm:px-6",
         scrolled ? "border-border" : "border-transparent",
       )}
     >
@@ -91,7 +91,7 @@ export function Navbar({ user }: { user: SessionUser }) {
                 className={cn(
                   "truncate",
                   index === crumbs.length - 1
-                    ? "text-sm font-semibold text-foreground"
+                    ? "font-display text-sm text-foreground"
                     : "text-sm text-muted-foreground",
                 )}
               >
@@ -107,7 +107,7 @@ export function Navbar({ user }: { user: SessionUser }) {
 
       {/* Search hint ("/" focuses the search on the employees page) */}
       <div className="hidden items-center gap-2 rounded-input border border-border bg-surface-2 px-3 py-1.5 text-muted-foreground md:flex">
-        <Search className="size-3.5" aria-hidden="true" />
+        <Search className="size-4" strokeWidth={1.5} aria-hidden="true" />
         <span className="caption">Press</span>
         <kbd className="rounded border border-border bg-surface px-1.5 py-0.5 font-mono text-[11px]">
           /

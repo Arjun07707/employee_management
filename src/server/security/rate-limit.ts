@@ -57,6 +57,13 @@ export function checkApiRateLimit(ip: string): void {
   hit(`api:${ip}`, API_LIMIT, API_WINDOW_MS);
 }
 
+export function enforceRateLimit(
+  key: string,
+  opts: { limit: number; windowMs: number },
+): void {
+  hit(`rl:${key}`, opts.limit, opts.windowMs);
+}
+
 /** Test-only helper so each test starts with an empty limiter. */
 export function resetRateLimits(): void {
   buckets.clear();

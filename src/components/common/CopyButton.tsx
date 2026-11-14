@@ -41,14 +41,14 @@ export function CopyButton({
           "inline-flex size-8 items-center justify-center rounded-md text-muted-foreground",
           "transition-colors duration-200 hover:bg-surface-2 hover:text-foreground",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-          copied && "text-success",
+          copied && "text-foreground",
           className,
         )}
       >
         {copied ? (
-          <Check className="size-4" aria-hidden="true" />
+          <Check className="size-4" strokeWidth={1.5} aria-hidden="true" />
         ) : (
-          <Copy className="size-4" aria-hidden="true" />
+          <Copy className="size-4" strokeWidth={1.5} aria-hidden="true" />
         )}
       </button>
     </Tooltip>

@@ -26,17 +26,17 @@ export function EmployeeNotFound() {
   return (
     <div
       ref={ref}
-      className="flex flex-col items-center justify-center gap-4 rounded-card border border-border bg-surface px-6 py-20 text-center shadow-card"
+      className="flex flex-col items-center justify-center gap-4 rounded-card border border-border bg-surface px-6 py-20 text-center"
     >
-      <span
-        data-anim="icon"
-        className="inline-flex size-16 items-center justify-center rounded-full bg-primary-soft"
-      >
-        <SearchX className="size-7 text-primary" aria-hidden="true" />
+      <span data-anim="icon" className="inline-flex text-muted-foreground">
+        <SearchX className="size-16" strokeWidth={1.25} aria-hidden="true" />
       </span>
 
       <div data-anim="text" className="space-y-1">
-        <p className="section-title text-foreground">Employee not found</p>
+        <p className="page-title text-foreground">
+          Employee <em>not found</em>
+          <span className="text-highlight">.</span>
+        </p>
         <p className="text-sm text-muted-foreground">
           This record may have been deleted, or the link is incorrect.
         </p>
@@ -44,7 +44,7 @@ export function EmployeeNotFound() {
 
       <Button asChild data-anim="text">
         <Link href="/employees">
-          <ArrowLeft className="size-4" aria-hidden="true" />
+          <ArrowLeft className="size-4" strokeWidth={1.5} aria-hidden="true" />
           Back to employees
         </Link>
       </Button>

@@ -59,7 +59,7 @@ export const DropdownMenuItem = React.forwardRef<
         "data-[highlighted]:bg-surface-2 data-[highlighted]:text-foreground",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         destructive
-          ? "text-danger data-[highlighted]:bg-danger/10 data-[highlighted]:text-danger"
+          ? "text-foreground data-[highlighted]:bg-foreground data-[highlighted]:text-background"
           : "text-foreground",
         className,
       )}

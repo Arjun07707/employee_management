@@ -19,7 +19,6 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { DEPARTMENT_COLORS } from "@/shared/constants";
 import type { DepartmentStat } from "@/shared/types/employee";
 import { formatNumberIN } from "@/lib/format";
 
@@ -43,10 +42,12 @@ function ChartTooltip({
     <div className="rounded-input border border-border bg-surface px-3 py-2 shadow-card-md">
       <p className="text-sm font-semibold text-foreground">{data.department}</p>
       <p className="caption text-muted-foreground">
-        {data.count} employee{data.count === 1 ? "" : "s"}
+        <span className="font-mono">{data.count}</span> employee
+        {data.count === 1 ? "" : "s"}
       </p>
       <p className="caption text-muted-foreground">
-        Avg salary ₹{formatNumberIN(data.avgSalary)}
+        Avg salary ₹
+        <span className="font-mono">{formatNumberIN(data.avgSalary)}</span>
       </p>
     </div>
   );
@@ -58,6 +59,8 @@ export function DepartmentChart({ data }: { data: DepartmentStat[] }) {
     count: item.count,
     avgSalary: item.avgSalary,
   }));
+
+  const top = data.reduce((m, d, i, a) => (d.count > a[m].count ? i : m), 0);
 
   return (
     <Card>
@@ -76,16 +79,12 @@ export function DepartmentChart({ data }: { data: DepartmentStat[] }) {
               margin={{ top: 8, right: 8, bottom: 0, left: -16 }}
               barCategoryGap={12}
             >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="var(--border)"
-                vertical={false}
-              />
+              <CartesianGrid stroke="var(--border)" vertical={false} />
               <XAxis
                 dataKey="department"
-                tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+                tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
                 tickLine={false}
-                axisLine={{ stroke: "var(--border)" }}
+                axisLine={false}
                 interval={0}
                 angle={-30}
                 textAnchor="end"
@@ -100,22 +99,19 @@ export function DepartmentChart({ data }: { data: DepartmentStat[] }) {
               />
               <Tooltip
                 content={<ChartTooltip />}
-                cursor={{ fill: "var(--surface-2)", opacity: 0.6 }}
+                cursor={{ fill: "var(--surface-2)" }}
               />
               <Bar
                 dataKey="count"
-                radius={[8, 8, 0, 0]}
+                radius={[4, 4, 0, 0]}
                 animationDuration={900}
                 maxBarSize={44}
               >
-                {chartData.map((entry) => (
+                {chartData.map((d, i) => (
                   <Cell
-                    key={entry.department}
-                    fill={
-                      DEPARTMENT_COLORS[
-                        entry.department as keyof typeof DEPARTMENT_COLORS
-                      ]
-                    }
+                    key={d.department}
+                    fill={i === top ? "var(--highlight)" : "var(--foreground)"}
+                    fillOpacity={i === top ? 1 : 0.88}
                   />
                 ))}
               </Bar>

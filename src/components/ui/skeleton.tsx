@@ -9,7 +9,7 @@ export function Skeleton({
   return (
     <div
       aria-hidden="true"
-      className={cn("shimmer rounded-md bg-surface-2/60", className)}
+      className={cn("skeleton rounded-md", className)}
       {...props}
     />
   );

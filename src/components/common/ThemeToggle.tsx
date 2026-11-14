@@ -67,6 +67,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       <span className="relative size-4">
         <Sun
           aria-hidden="true"
+          strokeWidth={1.5}
           className={cn(
             "absolute inset-0 size-4 transition-all duration-300",
             isDark
@@ -76,6 +77,7 @@ export function ThemeToggle({ className }: { className?: string }) {
         />
         <Moon
           aria-hidden="true"
+          strokeWidth={1.5}
           className={cn(
             "absolute inset-0 size-4 transition-all duration-300",
             isDark

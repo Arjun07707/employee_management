@@ -22,6 +22,12 @@ const envSchema = z.object({
   ADMIN_PASSWORD: z
     .string()
     .min(8, "ADMIN_PASSWORD must be at least 8 characters long"),
+  ADMIN_USERNAME: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(3, "ADMIN_USERNAME must be at least 3 characters")
+    .default("admin"),
   NEXT_PUBLIC_APP_NAME: z.string().trim().min(1).default("Employee Management"),
 });
 

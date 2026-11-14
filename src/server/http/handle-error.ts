@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
+import { AUTH_COOKIE_NAME } from "@/shared/constants";
+
 import { AppError, TooManyRequestsError } from "./errors";
 
 interface ErrorItem {
@@ -18,7 +20,7 @@ function fail(
   headers?: Record<string, string>,
   requestId?: string,
 ): NextResponse {
-  return NextResponse.json(
+  const response = NextResponse.json(
     {
       success: false,
       message,
@@ -32,6 +34,17 @@ function fail(
       },
     },
   );
+
+  // Clear a stale/unusable auth cookie on every 401 so the client can't be
+  // bounced back and forth between a protected page and /login.
+  if (status === 401) {
+    response.cookies.set(AUTH_COOKIE_NAME, "", {
+      maxAge: 0,
+      path: "/",
+    });
+  }
+
+  return response;
 }
 
 export function handleError(error: unknown, requestId?: string): NextResponse {
@@ -68,10 +81,36 @@ export function handleError(error: unknown, requestId?: string): NextResponse {
     error !== null &&
     (error as { code?: number }).code === 11000
   ) {
+    const key = Object.keys(
+      (error as { keyPattern?: Record<string, number> }).keyPattern ?? {},
+    )[0];
+    if (key === "username") {
+      return fail(
+        409,
+        "Username is already taken",
+        [{ field: "username", message: "This username is already taken" }],
+        undefined,
+        requestId,
+      );
+    }
+    if (key === "employeeRef") {
+      return fail(
+        409,
+        "This employee already has a login",
+        [{ field: "employeeRef", message: "This employee already has a login" }],
+        undefined,
+        requestId,
+      );
+    }
     return fail(
       409,
-      "Email already exists",
-      [{ field: "email", message: "This email is already in use" }],
+      `Duplicate key on field: ${key ?? "unknown"}`,
+      [
+        {
+          field: key ?? "unknown",
+          message: `This ${key ?? "value"} is already in use`,
+        },
+      ],
       undefined,
       requestId,
     );

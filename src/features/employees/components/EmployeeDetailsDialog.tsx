@@ -17,7 +17,6 @@ import { Avatar } from "@/components/common/Avatar";
 import { CopyButton } from "@/components/common/CopyButton";
 import { DeleteConfirmDialog } from "@/features/employees/components/DeleteConfirmDialog";
 import { StatusBadge } from "@/features/employees/components/StatusBadge";
-import { DEPARTMENT_COLORS } from "@/shared/constants";
 import { formatDate, formatINR, tenure } from "@/lib/format";
 import type { Employee } from "@/shared/types/employee";
 
@@ -40,8 +39,6 @@ export function EmployeeDetailsDialog({
 
   if (!employee) return null;
 
-  const color = DEPARTMENT_COLORS[employee.department];
-
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -60,7 +57,7 @@ export function EmployeeDetailsDialog({
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <StatusBadge status={employee.status} />
                   <span className="inline-flex items-center gap-1">
-                    <code className="rounded-md bg-surface-2 px-1.5 py-0.5 font-mono text-[11px] text-foreground">
+                    <code className="rounded-input border border-border bg-transparent px-1.5 py-0.5 font-mono text-[11px] text-foreground">
                       {employee.employeeId}
                     </code>
                     <CopyButton
@@ -79,6 +76,7 @@ export function EmployeeDetailsDialog({
               <dd className="mt-0.5 flex items-center gap-1.5">
                 <Mail
                   className="size-3.5 text-muted-foreground"
+                  strokeWidth={1.5}
                   aria-hidden="true"
                 />
                 <a
@@ -95,6 +93,7 @@ export function EmployeeDetailsDialog({
               <dd className="mt-0.5 flex items-center gap-1.5">
                 <Phone
                   className="size-3.5 text-muted-foreground"
+                  strokeWidth={1.5}
                   aria-hidden="true"
                 />
                 <a
@@ -108,15 +107,7 @@ export function EmployeeDetailsDialog({
 
             <div>
               <dt className="caption text-muted-foreground">Department</dt>
-              <dd
-                className="mt-0.5 flex items-center gap-1.5 font-medium"
-                style={{ color }}
-              >
-                <span
-                  aria-hidden="true"
-                  className="size-2 rounded-full"
-                  style={{ backgroundColor: color }}
-                />
+              <dd className="mt-0.5 font-medium text-foreground">
                 {employee.department}
               </dd>
             </div>
@@ -150,29 +141,37 @@ export function EmployeeDetailsDialog({
             <Button variant="ghost" onClick={() => onOpenChange(false)}>
               Close
             </Button>
-            <Button asChild variant="outline">
+            <Button asChild variant="secondary">
               <Link href={`/employees/${employee.id}`}>Full details</Link>
             </Button>
             {canEdit ? (
               <>
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   onClick={() => {
                     onOpenChange(false);
                     router.push(`/employees/${employee.id}/edit`);
                   }}
                 >
-                  <Pencil className="size-4" aria-hidden="true" />
+                  <Pencil
+                    className="size-4"
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
                   Edit
                 </Button>
                 <Button
-                  variant="danger"
+                  variant="destructive"
                   onClick={() => {
                     onOpenChange(false);
                     setConfirmDelete(true);
                   }}
                 >
-                  <Trash2 className="size-4" aria-hidden="true" />
+                  <Trash2
+                    className="size-4"
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
                   Delete
                 </Button>
               </>

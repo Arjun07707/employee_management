@@ -58,8 +58,9 @@ Open <http://localhost:3000>. The API lives under `/api`; see
 | `MONGODB_URI`          | yes      | Local URI or Atlas `mongodb+srv://` URI    |
 | `JWT_SECRET`           | yes      | At least 32 characters; use a random value |
 | `JWT_EXPIRES_IN`       | no       | `7d` by default (`30m`, `12h`, `7d`, …)    |
-| `ADMIN_EMAIL`          | yes      | Used by `npm run create-admin`             |
-| `ADMIN_PASSWORD`       | yes      | Used by `npm run create-admin`             |
+| `ADMIN_EMAIL`          | yes      | Admin email used by `npm run create-admin` |
+| `ADMIN_PASSWORD`       | yes      | Admin password used by `npm run create-admin` |
+| `ADMIN_USERNAME`       | yes      | Admin username used by `npm run create-admin` |
 | `NODE_ENV`             | no       | `development` / `test` / `production`      |
 | `NEXT_PUBLIC_APP_NAME` | no       | Display name used by the UI                |
 
@@ -103,6 +104,11 @@ All responses use a standard envelope:
 | `POST`   | `/api/auth/login`       | public, rate-limited | Sign in, set cookie               |
 | `POST`   | `/api/auth/logout`      | any                  | Clear cookie                      |
 | `GET`    | `/api/auth/me`          | any                  | Current user                      |
+| `GET`    | `/api/auth/username-available` | public, rate-limited | Check if a username is available |
+| `POST`   | `/api/auth/change-credentials` | any              | Change password / username        |
+| `GET`    | `/api/employees/:id/account`   | admin            | Get employee's login account      |
+| `POST`   | `/api/employees/:id/account`   | admin            | Create employee login account     |
+| `PATCH`  | `/api/employees/:id/account`   | admin            | Update employee login account     |
 | `GET`    | `/api/employees`        | admin, viewer        | Search / filter / sort / paginate |
 | `POST`   | `/api/employees`        | admin                | Create                            |
 | `GET`    | `/api/employees/export` | admin, viewer        | CSV export (max 10,000)           |
@@ -112,31 +118,36 @@ All responses use a standard envelope:
 | `GET`    | `/api/dashboard/stats`  | admin, viewer        | Dashboard aggregates              |
 
 Status codes: `200`, `201`, `400` (validation / bad id / bad JSON),
-`401`, `403`, `404`, `409` (duplicate email), `429` (with `Retry-After`),
+`401`, `403`, `404`, `409` (duplicate username), `429` (with `Retry-After`),
 `500`, and `503` for a degraded health check. Full examples are in
 [`docs/API.md`](docs/API.md).
 
 ### Auth and roles
 
+- Login is username-based (`POST /api/auth/login` with `username` + `password`).
 - Login sets `ems_token`: `HttpOnly`, `SameSite=Lax`, `Path=/`, `Secure` in
   production, lifetime equal to the JWT expiry.
 - `src/proxy.ts` (the Next 16 replacement for `middleware.ts`) redirects
   unauthenticated page requests to `/login?next=…` and returns `401` JSON for
   protected API routes.
+- Employees who must change their password (`mustChangePassword`) are gated to
+  `/account` until they set a new one.
 - Route handlers call `requireRole()` again as defense in depth; viewers get
   `403` on every mutation.
-- Login is limited to 5 attempts per 15 minutes per IP + email; the API is
+- Login is limited to 5 attempts per 15 minutes per IP + username; the API is
   limited to 120 requests per minute per IP.
+- Roles: `admin`, `viewer`, `employee`. Employees land on `/me` after sign-in;
+  admins and viewers land on `/dashboard`.
 
 ### Database notes
 
 - Collections: `employees`, `users`, `counters`.
 - `employeeId` (`EMP-0001`, …) comes from an atomic counter. Gaps are expected
   when a create fails after the increment.
-- Email uniqueness is enforced by a **partial unique index** on
-  `{ email: 1 }` where `isDeleted: false`, so a soft-deleted employee's email
-  can be reused. The service checks duplicates first and Mongo's `11000` error
-  is also mapped to `409` for race conditions.
+- Username uniqueness is enforced by a unique index on
+  `{ username: 1 }`, and one login per employee is enforced by a partial unique
+  index on `{ employeeRef: 1 }` where `employeeRef` is set. Duplicate
+  username/employeeRef conflicts map to `409` for race conditions.
 - Delete is always soft (`isDeleted`, `deletedAt`). Soft-deleted rows are
   excluded from lists, search, export, detail reads, and dashboard stats.
 - Listing/sorting indexes are partial on `isDeleted: false` and every list
@@ -217,6 +228,8 @@ No local MongoDB is required for tests.
 - [x] Login page and dashboard UI
 - [x] Employee list, details, create/edit forms
 - [x] Charts, GSAP motion, dark/light theme
+- [x] Username-based login, `/me` profile, `/account` credentials
+- [x] Admin provisioning of employee login accounts at employee creation
 
 The full specification lives in [`plan/`](plan) and is consolidated in
 [`docs/PROJECT_SPEC.md`](docs/PROJECT_SPEC.md).

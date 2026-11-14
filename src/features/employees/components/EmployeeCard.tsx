@@ -5,9 +5,8 @@ import { MoreHorizontal, Pencil, Trash2, Eye } from "lucide-react";
 
 import { useMotion } from "@/animations/use-motion";
 import { fadeUp } from "@/animations/presets";
-import { cn } from "@/lib/utils";
+import { gsap } from "@/animations/gsap";
 import { formatDate, formatINR } from "@/lib/format";
-import { DEPARTMENT_COLORS } from "@/shared/constants";
 import type { Employee } from "@/shared/types/employee";
 import { Avatar } from "@/components/common/Avatar";
 import {
@@ -18,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { StatusBadge } from "@/features/employees/components/StatusBadge";
+import { DepartmentBadge } from "@/features/employees/components/DepartmentBadge";
 
 export interface EmployeeCardProps {
   employee: Employee;
@@ -42,16 +42,44 @@ export function EmployeeCard({
     { scope: ref, dependencies: [reanimateKey] },
   );
 
+  // Underline wipe on hover (replaces the old lift + glow).
+  useMotion(
+    ({ contextSafe }) => {
+      const el = ref.current;
+      const underline = el?.querySelector<HTMLElement>(
+        "[data-anim='underline']",
+      );
+      if (!el || !underline) return;
+
+      const onEnter = contextSafe(() => {
+        gsap.to(underline, { scaleX: 1, duration: 0.35, ease: "power3.out" });
+      });
+      const onLeave = contextSafe(() => {
+        gsap.to(underline, {
+          transformOrigin: "right",
+          scaleX: 0,
+          duration: 0.35,
+          ease: "power3.out",
+        });
+      });
+
+      el.addEventListener("mouseenter", onEnter);
+      el.addEventListener("mouseleave", onLeave);
+      return () => {
+        el.removeEventListener("mouseenter", onEnter);
+        el.removeEventListener("mouseleave", onLeave);
+      };
+    },
+    { scope: ref },
+  );
+
   return (
     <article
       ref={ref as React.RefObject<HTMLElement>}
       data-anim="card"
       data-employee-id={employee.id}
       onClick={() => onRowAction("view", employee)}
-      className={cn(
-        "cursor-pointer rounded-card border border-border bg-surface p-4 shadow-card",
-        "transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-card-md",
-      )}
+      className="relative cursor-pointer overflow-hidden rounded-card border border-border bg-surface p-6"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
@@ -74,7 +102,11 @@ export function EmployeeCard({
               onClick={(event) => event.stopPropagation()}
               className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <MoreHorizontal className="size-4" aria-hidden="true" />
+              <MoreHorizontal
+                className="size-4"
+                strokeWidth={1.5}
+                aria-hidden="true"
+              />
             </button>
           </DropdownMenuTrigger>
 
@@ -83,7 +115,7 @@ export function EmployeeCard({
             onClick={(event) => event.stopPropagation()}
           >
             <DropdownMenuItem onSelect={() => onRowAction("view", employee)}>
-              <Eye className="size-4" aria-hidden="true" />
+              <Eye className="size-4" strokeWidth={1.5} aria-hidden="true" />
               View
             </DropdownMenuItem>
             {canEdit ? (
@@ -91,7 +123,11 @@ export function EmployeeCard({
                 <DropdownMenuItem
                   onSelect={() => onRowAction("edit", employee)}
                 >
-                  <Pencil className="size-4" aria-hidden="true" />
+                  <Pencil
+                    className="size-4"
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
                   Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -99,7 +135,11 @@ export function EmployeeCard({
                   destructive
                   onSelect={() => onRowAction("delete", employee)}
                 >
-                  <Trash2 className="size-4" aria-hidden="true" />
+                  <Trash2
+                    className="size-4"
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
                   Delete
                 </DropdownMenuItem>
               </>
@@ -109,17 +149,7 @@ export function EmployeeCard({
       </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        <span
-          className="inline-flex items-center gap-1.5 rounded-full bg-surface-2 px-2.5 py-0.5 text-xs font-medium"
-          style={{ color: DEPARTMENT_COLORS[employee.department] }}
-        >
-          <span
-            aria-hidden="true"
-            className="size-1.5 rounded-full"
-            style={{ backgroundColor: DEPARTMENT_COLORS[employee.department] }}
-          />
-          {employee.department}
-        </span>
+        <DepartmentBadge department={employee.department} />
         <StatusBadge status={employee.status} />
       </div>
 
@@ -149,6 +179,12 @@ export function EmployeeCard({
           </dd>
         </div>
       </dl>
+
+      <span
+        data-anim="underline"
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-foreground"
+      />
     </article>
   );
 }

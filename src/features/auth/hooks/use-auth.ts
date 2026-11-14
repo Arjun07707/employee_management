@@ -9,17 +9,17 @@ import {
   logout as logoutRequest,
 } from "@/features/auth/api";
 import type { LoginInput } from "@/features/auth/api";
-import type { SessionUser } from "@/shared/types/auth";
+import type { SessionUserDTO } from "@/shared/types/account";
 
 interface UseAuthResult {
   submit: (input: LoginInput) => Promise<{ ok: boolean; message?: string }>;
   signingOut: boolean;
   signOut: () => Promise<void>;
   /** Session user when the parent passed one in. */
-  user: SessionUser | null;
+  user: SessionUserDTO | null;
 }
 
-export function useAuth(user: SessionUser | null = null): UseAuthResult {
+export function useAuth(user: SessionUserDTO | null = null): UseAuthResult {
   const router = useRouter();
   const [signingOut, setSigningOut] = React.useState(false);
 
@@ -40,7 +40,7 @@ export function useAuth(user: SessionUser | null = null): UseAuthResult {
           };
         }
         if (error.status === 401) {
-          return { ok: false, message: "Invalid email or password" };
+          return { ok: false, message: "Invalid username or password" };
         }
         return { ok: false, message: error.message };
       }

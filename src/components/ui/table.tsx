@@ -50,6 +50,8 @@ export const TableRow = React.forwardRef<
     ref={ref}
     className={cn(
       "border-b border-border transition-colors hover:bg-surface-2",
+      "[&>td:first-child]:relative [&>td:first-child]:before:absolute [&>td:first-child]:before:inset-y-0 [&>td:first-child]:before:left-0 [&>td:first-child]:before:w-0.5 [&>td:first-child]:before:bg-foreground [&>td:first-child]:before:origin-top [&>td:first-child]:before:scale-y-0 [&>td:first-child]:before:transition-transform",
+      "hover:[&>td:first-child]:before:scale-y-100",
       className,
     )}
     {...props}
@@ -64,7 +66,7 @@ export const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "h-12 whitespace-nowrap px-4 text-left align-middle text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+      "h-12 whitespace-nowrap px-4 text-left align-middle tracking-[0.08em] text-[11px] leading-4 font-medium uppercase text-muted-foreground",
       className,
     )}
     {...props}
@@ -78,7 +80,7 @@ export const TableCell = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <td
     ref={ref}
-    className={cn("px-4 py-3 align-middle", className)}
+    className={cn("px-4 py-3 align-middle tabular-nums", className)}
     {...props}
   />
 ));

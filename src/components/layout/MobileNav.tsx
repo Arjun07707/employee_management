@@ -8,15 +8,15 @@ import { LayoutDashboard, Users, UserPlus, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Logo } from "@/components/common/Logo";
 import { Avatar } from "@/components/common/Avatar";
-import { DotBadge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
-import type { SessionUser } from "@/shared/types/auth";
+import type { SessionUserDTO } from "@/shared/types/account";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
   href: string;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
 }
 
 const NAV_ITEMS: NavItem[] = [
@@ -31,12 +31,12 @@ function isActive(pathname: string, href: string): boolean {
 }
 
 /** Hides mutating entries (Add Employee) from viewers. */
-function visibleItems(role: SessionUser["role"]): NavItem[] {
+function visibleItems(role: SessionUserDTO["role"]): NavItem[] {
   if (role === "admin") return NAV_ITEMS;
   return NAV_ITEMS.filter((item) => item.href !== "/employees/new");
 }
 
-export function MobileNav({ user }: { user: SessionUser }) {
+export function MobileNav({ user }: { user: SessionUserDTO }) {
   const pathname = usePathname();
   const [open, setOpen] = React.useState(false);
 
@@ -48,16 +48,13 @@ export function MobileNav({ user }: { user: SessionUser }) {
           aria-label="Open navigation"
           className="inline-flex size-10 items-center justify-center rounded-input text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden"
         >
-          <Menu className="size-5" aria-hidden="true" />
+          <Menu className="size-5" strokeWidth={1.5} aria-hidden="true" />
         </button>
       </SheetTrigger>
 
       <SheetContent aria-label="Navigation">
         <div className="flex items-center gap-2.5">
-          <Logo size={28} />
-          <span className="text-sm font-bold tracking-tight text-foreground">
-            Employee Management
-          </span>
+          <Logo size={28} withName nameClassName="text-sm" />
         </div>
 
         <nav aria-label="Primary" className="flex-1 overflow-y-auto px-3 py-4">
@@ -79,11 +76,15 @@ export function MobileNav({ user }: { user: SessionUser }) {
                     className={cn(
                       "flex h-11 items-center gap-3 rounded-input px-3 text-sm font-medium transition-colors",
                       active
-                        ? "bg-primary-soft text-primary"
+                        ? "bg-surface-2 text-foreground"
                         : "text-muted-foreground hover:bg-surface-2 hover:text-foreground",
                     )}
                   >
-                    <Icon className="size-4 shrink-0" aria-hidden="true" />
+                    <Icon
+                      className="size-4 shrink-0"
+                      strokeWidth={1.5}
+                      aria-hidden="true"
+                    />
                     {item.label}
                   </Link>
                 </li>
@@ -99,12 +100,12 @@ export function MobileNav({ user }: { user: SessionUser }) {
               <p className="truncate text-sm font-medium text-foreground">
                 {user.name}
               </p>
-              <DotBadge
-                variant={user.role === "admin" ? "primary" : "muted"}
+              <Badge
+                variant={user.role === "admin" ? "default" : "muted"}
                 className="mt-0.5 px-1.5 py-0 text-[11px] capitalize"
               >
                 {user.role}
-              </DotBadge>
+              </Badge>
             </div>
           </div>
           <ThemeToggle />

@@ -8,9 +8,10 @@ import { fadeUp } from "@/animations/presets";
 import { Flip } from "@/animations/gsap";
 import { cn } from "@/lib/utils";
 import { formatDate, formatINR } from "@/lib/format";
-import { DEPARTMENT_COLORS, type SortField } from "@/shared/constants";
+import type { SortField } from "@/shared/constants";
 import type { Employee } from "@/shared/types/employee";
 import { Avatar } from "@/components/common/Avatar";
+import { DepartmentBadge } from "@/features/employees/components/DepartmentBadge";
 import {
   Table,
   TableBody,
@@ -26,7 +27,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DotBadge } from "@/components/ui/badge";
 import { StatusBadge } from "@/features/employees/components/StatusBadge";
 
 export interface EmployeeTableProps {
@@ -83,10 +83,10 @@ function SortHeader({
         type="button"
         onClick={() => onSort(field)}
         className={cn(
-          "flex h-12 w-full items-center gap-1.5 px-4 text-left text-xs font-semibold uppercase tracking-wide transition-colors",
+          "flex h-12 w-full items-center gap-1.5 px-4 text-left text-[11px] font-medium uppercase leading-4 tracking-[0.08em] transition-colors",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
           active
-            ? "text-primary"
+            ? "text-foreground"
             : "text-muted-foreground hover:text-foreground",
         )}
       >
@@ -94,9 +94,10 @@ function SortHeader({
         <ChevronDown
           ref={chevronRef}
           aria-hidden="true"
+          strokeWidth={1.5}
           className={cn(
-            "size-3.5 transition-transform duration-250",
-            active ? "opacity-100" : "opacity-35",
+            "size-4 transition-transform duration-250",
+            active ? "text-highlight opacity-100" : "opacity-35",
             active && order === "asc" && "rotate-180",
           )}
         />
@@ -135,7 +136,7 @@ export function EmployeeTable({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-card border border-border bg-surface shadow-card transition-opacity duration-200",
+        "overflow-hidden rounded-card border border-border bg-surface transition-opacity duration-200",
         dimmed && "opacity-60",
       )}
     >
@@ -208,14 +209,7 @@ export function EmployeeTable({
               </TableCell>
 
               <TableCell>
-                <DotBadge variant="default" dotClassName="">
-                  <span
-                    className="font-medium"
-                    style={{ color: DEPARTMENT_COLORS[employee.department] }}
-                  >
-                    {employee.department}
-                  </span>
-                </DotBadge>
+                <DepartmentBadge department={employee.department} />
               </TableCell>
 
               <TableCell className="text-muted-foreground">
@@ -243,7 +237,11 @@ export function EmployeeTable({
                       onClick={(event) => event.stopPropagation()}
                       className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
-                      <MoreHorizontal className="size-4" aria-hidden="true" />
+                      <MoreHorizontal
+                        className="size-4"
+                        strokeWidth={1.5}
+                        aria-hidden="true"
+                      />
                     </button>
                   </DropdownMenuTrigger>
 
@@ -254,7 +252,11 @@ export function EmployeeTable({
                     <DropdownMenuItem
                       onSelect={() => onRowAction("view", employee)}
                     >
-                      <Eye className="size-4" aria-hidden="true" />
+                      <Eye
+                        className="size-4"
+                        strokeWidth={1.5}
+                        aria-hidden="true"
+                      />
                       View
                     </DropdownMenuItem>
 
@@ -263,7 +265,11 @@ export function EmployeeTable({
                         <DropdownMenuItem
                           onSelect={() => onRowAction("edit", employee)}
                         >
-                          <Pencil className="size-4" aria-hidden="true" />
+                          <Pencil
+                            className="size-4"
+                            strokeWidth={1.5}
+                            aria-hidden="true"
+                          />
                           Edit
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
@@ -271,7 +277,11 @@ export function EmployeeTable({
                           destructive
                           onSelect={() => onRowAction("delete", employee)}
                         >
-                          <Trash2 className="size-4" aria-hidden="true" />
+                          <Trash2
+                            className="size-4"
+                            strokeWidth={1.5}
+                            aria-hidden="true"
+                          />
                           Delete
                         </DropdownMenuItem>
                       </>

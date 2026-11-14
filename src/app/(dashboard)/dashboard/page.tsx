@@ -11,6 +11,7 @@ import { DepartmentBreakdown } from "@/features/dashboard/components/DepartmentB
 import { RecentEmployees } from "@/features/dashboard/components/RecentEmployees";
 import { DashboardSkeleton } from "@/features/dashboard/components/DashboardSkeleton";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { PageTitle } from "@/components/common/PageTitle";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/ErrorState";
@@ -59,18 +60,32 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title={`${greetingForHour()}, ${user.name.split(" ")[0]}`}
-        description={formatLongDate(new Date())}
-        actions={
-          <Button asChild>
-            <Link href="/employees/new">
-              <Plus className="size-4" aria-hidden="true" />
-              Add Employee
-            </Link>
-          </Button>
-        }
-      />
+      <header>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="min-w-0">
+            <p className="eyebrow font-mono text-muted-foreground">
+              {formatLongDate(new Date())}
+            </p>
+            <div className="mt-1.5">
+              <PageTitle>
+                {greetingForHour()}, <em>{user.name.split(" ")[0]}</em>
+              </PageTitle>
+            </div>
+          </div>
+          <div className="flex shrink-0 flex-wrap gap-2">
+            <Button asChild>
+              <Link href="/employees/new">
+                <Plus className="size-4" strokeWidth={1.5} aria-hidden="true" />
+                Add Employee
+              </Link>
+            </Button>
+          </div>
+        </div>
+        <div className="mt-5 space-y-[3px]" aria-hidden="true">
+          <div className="h-px bg-border" />
+          <div className="h-px bg-border" />
+        </div>
+      </header>
 
       {isEmpty ? (
         <div className="rounded-card border border-dashed border-border bg-surface p-12 text-center">
@@ -80,7 +95,7 @@ export default function DashboardPage() {
           </p>
           <Button asChild className="mt-5">
             <Link href="/employees/new">
-              <Plus className="size-4" aria-hidden="true" />
+              <Plus className="size-4" strokeWidth={1.5} aria-hidden="true" />
               Add your first employee
             </Link>
           </Button>

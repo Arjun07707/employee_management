@@ -6,12 +6,12 @@ export type BadgeVariant =
   "default" | "primary" | "success" | "warning" | "danger" | "muted";
 
 const variantClasses: Record<BadgeVariant, string> = {
-  default: "bg-surface-2 text-foreground",
-  primary: "bg-primary-soft text-primary",
-  success: "bg-success/12 text-success",
-  warning: "bg-warning/15 text-warning",
-  danger: "bg-danger/12 text-danger",
-  muted: "bg-surface-2 text-muted-foreground",
+  default: "border-border text-foreground",
+  primary: "border-border text-foreground",
+  success: "border-border text-foreground",
+  warning: "border-border text-foreground",
+  danger: "border-foreground text-foreground",
+  muted: "border-border text-muted-foreground",
 };
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
@@ -26,7 +26,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium",
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium",
         variantClasses[variant],
         className,
       )}

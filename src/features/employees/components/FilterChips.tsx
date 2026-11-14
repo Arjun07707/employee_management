@@ -6,7 +6,6 @@ import { X } from "lucide-react";
 import { useMotion } from "@/animations/use-motion";
 import { scaleIn, DUR, EASE } from "@/animations/presets";
 import { gsap } from "@/animations/gsap";
-import { DEPARTMENT_COLORS } from "@/shared/constants";
 import { STATUS_LABELS } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +13,6 @@ interface Chip {
   key: string;
   label: string;
   onRemove: () => void;
-  color?: string;
 }
 
 export interface FilterChipsProps {
@@ -53,7 +51,6 @@ export function FilterChips({
         key: "department",
         label: department,
         onRemove: onRemoveDepartment,
-        color: DEPARTMENT_COLORS[department as keyof typeof DEPARTMENT_COLORS],
       });
     }
     if (status) {
@@ -121,23 +118,16 @@ export function FilterChips({
         <span
           key={chip.key}
           data-chip
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-2 py-1 pl-3 pr-1.5 text-xs font-medium text-foreground"
+          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-transparent py-1 pl-3 pr-1.5 text-xs font-medium text-foreground"
         >
-          {chip.color ? (
-            <span
-              aria-hidden="true"
-              className="size-1.5 rounded-full"
-              style={{ backgroundColor: chip.color }}
-            />
-          ) : null}
           {chip.label}
           <button
             type="button"
             data-chip-remove
             aria-label={`Remove ${chip.label} filter`}
-            className="rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-surface hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <X className="size-3" aria-hidden="true" />
+            <X className="size-3" strokeWidth={1.5} aria-hidden="true" />
           </button>
         </span>
       ))}

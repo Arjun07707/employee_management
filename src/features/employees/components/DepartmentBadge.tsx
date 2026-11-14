@@ -1,16 +1,9 @@
 import type { Department } from "@/shared/constants";
-import { DEPARTMENT_COLORS } from "@/shared/constants";
-import { DotBadge } from "@/components/ui/badge";
 
 export function DepartmentBadge({ department }: { department: Department }) {
   return (
-    <DotBadge variant="default" dotClassName="">
-      <span
-        style={{ color: DEPARTMENT_COLORS[department] }}
-        className="font-medium"
-      >
-        {department}
-      </span>
-    </DotBadge>
+    <span className="inline-flex items-center rounded-full border border-border bg-transparent px-2.5 py-1 text-xs font-medium text-foreground">
+      {department}
+    </span>
   );
 }
