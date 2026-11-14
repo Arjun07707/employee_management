@@ -44,7 +44,9 @@ export function useUsernameAvailability(
   const normalized = value.trim().toLowerCase();
   const debounced = useDebouncedValue(normalized, USERNAME_CHECK_DEBOUNCE_MS);
   const settled = normalized === debounced;
-  const isReserved = (RESERVED_USERNAMES as readonly string[]).includes(normalized);
+  const isReserved = (RESERVED_USERNAMES as readonly string[]).includes(
+    normalized,
+  );
   const local = usernameSchema.safeParse(normalized);
 
   const query = useQuery({
@@ -68,19 +70,26 @@ export function useUsernameAvailability(
   else if (!settled || query.isFetching) status = "checking";
   else if (query.isError) status = "error";
   else if (query.data)
-    status = query.data.reason === "current" ? "current" : query.data.available ? "available" : "taken";
+    status =
+      query.data.reason === "current"
+        ? "current"
+        : query.data.available
+          ? "available"
+          : "taken";
   else status = "checking";
 
   const message =
     status === "invalid" || status === "hint"
-      ? local.success ? "" : local.error.issues[0]!.message
+      ? local.success
+        ? ""
+        : local.error.issues[0]!.message
       : status === "reserved"
         ? "This username is reserved"
         : status === "checking"
           ? "Checking availability..."
           : status === "error"
             ? "Could not check availability. Try again."
-            : query.data?.message ?? "";
+            : (query.data?.message ?? "");
   const ok = status === "available" || status === "current";
   return {
     status,

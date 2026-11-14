@@ -1,6 +1,9 @@
 import { ok } from "@/server/http/api-response";
 import { withApi, enforceRateLimit } from "@/server/http/with-api";
-import { checkUsernameAvailability, getAccountUserIdByEmployee } from "@/server/services/account.service";
+import {
+  checkUsernameAvailability,
+  getAccountUserIdByEmployee,
+} from "@/server/services/account.service";
 
 export const GET = withApi(
   { roles: ["admin", "employee"], allowMustChange: true },
@@ -14,10 +17,13 @@ export const GET = withApi(
     if (user!.role === "employee") {
       excludeUserId = user!.id;
     } else if (user!.role === "admin" && forEmployee) {
-      excludeUserId = (await getAccountUserIdByEmployee(forEmployee)) ?? undefined;
+      excludeUserId =
+        (await getAccountUserIdByEmployee(forEmployee)) ?? undefined;
     }
 
-    const res = ok(await checkUsernameAvailability(username.slice(0, 64), { excludeUserId }));
+    const res = ok(
+      await checkUsernameAvailability(username.slice(0, 64), { excludeUserId }),
+    );
     res.headers.set("Cache-Control", "no-store");
     return res;
   },

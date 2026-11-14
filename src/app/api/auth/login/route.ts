@@ -15,12 +15,11 @@ export const POST = withApi({}, async (request) => {
   const { user, token } = await login(input);
   await setAuthCookie(token);
 
-  const redirectTo =
-    user.mustChangePassword
-      ? "/account?required=1"
-      : user.role === "employee"
-        ? "/me"
-        : "/dashboard";
+  const redirectTo = user.mustChangePassword
+    ? "/account?required=1"
+    : user.role === "employee"
+      ? "/me"
+      : "/dashboard";
 
   return ok({ ...user, redirectTo }, "Signed in successfully");
 });

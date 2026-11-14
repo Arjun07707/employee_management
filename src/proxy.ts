@@ -22,9 +22,7 @@ const REQUIRED_PAYLOAD_FIELDS = [
   "mcp",
 ] as const;
 
-function isWellFormed(
-  payload: unknown,
-): payload is {
+function isWellFormed(payload: unknown): payload is {
   sub: string;
   role: Role;
   username: string;
@@ -37,10 +35,7 @@ function isWellFormed(
   for (const field of REQUIRED_PAYLOAD_FIELDS) {
     if (!(field in p)) return false;
   }
-  if (
-    typeof p.role !== "string" ||
-    !ROLES.includes(p.role as Role)
-  ) {
+  if (typeof p.role !== "string" || !ROLES.includes(p.role as Role)) {
     return false;
   }
   if (typeof p.tv !== "number" || !Number.isInteger(p.tv) || p.tv < 0) {
@@ -54,7 +49,9 @@ function matchesPath(pathname: string, prefix: string): boolean {
   return pathname === prefix || pathname.startsWith(`${prefix}/`);
 }
 
-async function readToken(token: string | undefined): Promise<TokenClaims | null> {
+async function readToken(
+  token: string | undefined,
+): Promise<TokenClaims | null> {
   if (!token) return null;
 
   const secret = process.env.JWT_SECRET;
@@ -97,7 +94,8 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
         { success: false, message: "Authentication required" },
         { status: 401 },
       );
-      if (token) response.cookies.set(AUTH_COOKIE_NAME, "", { maxAge: 0, path: "/" });
+      if (token)
+        response.cookies.set(AUTH_COOKIE_NAME, "", { maxAge: 0, path: "/" });
       return response;
     }
 
@@ -106,7 +104,8 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("next", pathname);
     const response = NextResponse.redirect(loginUrl);
-    if (token) response.cookies.set(AUTH_COOKIE_NAME, "", { maxAge: 0, path: "/" });
+    if (token)
+      response.cookies.set(AUTH_COOKIE_NAME, "", { maxAge: 0, path: "/" });
     return response;
   }
 

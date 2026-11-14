@@ -97,7 +97,12 @@ export function handleError(error: unknown, requestId?: string): NextResponse {
       return fail(
         409,
         "This employee already has a login",
-        [{ field: "employeeRef", message: "This employee already has a login" }],
+        [
+          {
+            field: "employeeRef",
+            message: "This employee already has a login",
+          },
+        ],
         undefined,
         requestId,
       );

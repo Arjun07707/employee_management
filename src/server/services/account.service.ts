@@ -8,9 +8,7 @@ import {
   RESERVED_USERNAMES,
 } from "@/shared/constants";
 import type { Role } from "@/shared/constants";
-import {
-  usernameSchema,
-} from "@/shared/schemas/account.schema";
+import { usernameSchema } from "@/shared/schemas/account.schema";
 import type { UsernameCheckResult } from "@/shared/types/account";
 import {
   BadRequestError,
@@ -65,7 +63,7 @@ async function getEmployeeEntity(
   if (!employee || employee.isDeleted) {
     throw new NotFoundError("Employee not found");
   }
-  return employee as unknown as (EmployeeDoc & { _id: Types.ObjectId });
+  return employee as unknown as EmployeeDoc & { _id: Types.ObjectId };
 }
 
 // ---- availability (used by the live check) ----
@@ -132,7 +130,9 @@ async function suggest(base: string): Promise<string[]> {
 
   const taken = new Set(
     (
-      await User.find({ username: { $in: candidates } }).select("username").lean()
+      await User.find({ username: { $in: candidates } })
+        .select("username")
+        .lean()
     ).map((u) => u.username),
   );
 
@@ -173,17 +173,16 @@ export async function createAccountForEmployee(
     passwordHash,
     role: "employee",
     employeeRef: employee._id,
-    mustChangePassword:
-      FORCE_PASSWORD_CHANGE_ON_FIRST_LOGIN ? input.mustChangePassword ?? true : false,
+    mustChangePassword: FORCE_PASSWORD_CHANGE_ON_FIRST_LOGIN
+      ? (input.mustChangePassword ?? true)
+      : false,
     createdBy: admin.id,
   });
 
   return toAccountDTO(user);
 }
 
-export async function getAccountByEmployee(
-  employeeId: string,
-): Promise<{
+export async function getAccountByEmployee(employeeId: string): Promise<{
   id: string;
   username: string;
   role: string;
@@ -201,7 +200,9 @@ export async function getAccountByEmployee(
 export async function getAccountUserIdByEmployee(
   employeeId: string,
 ): Promise<string | null> {
-  const user = await User.findOne({ employeeRef: employeeId }).select("_id").lean();
+  const user = await User.findOne({ employeeRef: employeeId })
+    .select("_id")
+    .lean();
   return user ? String(user._id) : null;
 }
 
@@ -263,10 +264,9 @@ export async function changeOwnCredentials(
 
   const ok = await bcrypt.compare(input.currentPassword, user.passwordHash);
   if (!ok) {
-    throw new BadRequestError(
-      "Current password is incorrect",
-      [{ field: "currentPassword", message: "Current password is incorrect" }],
-    );
+    throw new BadRequestError("Current password is incorrect", [
+      { field: "currentPassword", message: "Current password is incorrect" },
+    ]);
   }
 
   if (input.newUsername) user.username = input.newUsername;

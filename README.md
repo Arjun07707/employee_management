@@ -53,16 +53,16 @@ Open <http://localhost:3000>. The API lives under `/api`; see
 
 ### Environment variables
 
-| Variable               | Required | Notes                                      |
-| ---------------------- | -------- | ------------------------------------------ |
-| `MONGODB_URI`          | yes      | Local URI or Atlas `mongodb+srv://` URI    |
-| `JWT_SECRET`           | yes      | At least 32 characters; use a random value |
-| `JWT_EXPIRES_IN`       | no       | `7d` by default (`30m`, `12h`, `7d`, …)    |
-| `ADMIN_EMAIL`          | yes      | Admin email used by `npm run create-admin` |
+| Variable               | Required | Notes                                         |
+| ---------------------- | -------- | --------------------------------------------- |
+| `MONGODB_URI`          | yes      | Local URI or Atlas `mongodb+srv://` URI       |
+| `JWT_SECRET`           | yes      | At least 32 characters; use a random value    |
+| `JWT_EXPIRES_IN`       | no       | `7d` by default (`30m`, `12h`, `7d`, …)       |
+| `ADMIN_EMAIL`          | yes      | Admin email used by `npm run create-admin`    |
 | `ADMIN_PASSWORD`       | yes      | Admin password used by `npm run create-admin` |
 | `ADMIN_USERNAME`       | yes      | Admin username used by `npm run create-admin` |
-| `NODE_ENV`             | no       | `development` / `test` / `production`      |
-| `NEXT_PUBLIC_APP_NAME` | no       | Display name used by the UI                |
+| `NODE_ENV`             | no       | `development` / `test` / `production`         |
+| `NEXT_PUBLIC_APP_NAME` | no       | Display name used by the UI                   |
 
 `.env.local` is git-ignored. `.env.example` is committed. Environment values
 are validated with Zod at startup and the app fails fast on bad config.
@@ -98,24 +98,24 @@ are validated with Zod at startup and the app fails fast on bad config.
 All responses use a standard envelope:
 `{ success, message?, data?, pagination?, errors? }`.
 
-| Method   | Path                    | Access               | Purpose                           |
-| -------- | ----------------------- | -------------------- | --------------------------------- |
-| `GET`    | `/api/health`           | public               | Server + DB connectivity          |
-| `POST`   | `/api/auth/login`       | public, rate-limited | Sign in, set cookie               |
-| `POST`   | `/api/auth/logout`      | any                  | Clear cookie                      |
-| `GET`    | `/api/auth/me`          | any                  | Current user                      |
-| `GET`    | `/api/auth/username-available` | public, rate-limited | Check if a username is available |
-| `POST`   | `/api/auth/change-credentials` | any              | Change password / username        |
-| `GET`    | `/api/employees/:id/account`   | admin            | Get employee's login account      |
-| `POST`   | `/api/employees/:id/account`   | admin            | Create employee login account     |
-| `PATCH`  | `/api/employees/:id/account`   | admin            | Update employee login account     |
-| `GET`    | `/api/employees`        | admin, viewer        | Search / filter / sort / paginate |
-| `POST`   | `/api/employees`        | admin                | Create                            |
-| `GET`    | `/api/employees/export` | admin, viewer        | CSV export (max 10,000)           |
-| `GET`    | `/api/employees/:id`    | admin, viewer        | Details                           |
-| `PATCH`  | `/api/employees/:id`    | admin                | Partial update                    |
-| `DELETE` | `/api/employees/:id`    | admin                | Soft delete                       |
-| `GET`    | `/api/dashboard/stats`  | admin, viewer        | Dashboard aggregates              |
+| Method   | Path                           | Access               | Purpose                           |
+| -------- | ------------------------------ | -------------------- | --------------------------------- |
+| `GET`    | `/api/health`                  | public               | Server + DB connectivity          |
+| `POST`   | `/api/auth/login`              | public, rate-limited | Sign in, set cookie               |
+| `POST`   | `/api/auth/logout`             | any                  | Clear cookie                      |
+| `GET`    | `/api/auth/me`                 | any                  | Current user                      |
+| `GET`    | `/api/auth/username-available` | public, rate-limited | Check if a username is available  |
+| `POST`   | `/api/auth/change-credentials` | any                  | Change password / username        |
+| `GET`    | `/api/employees/:id/account`   | admin                | Get employee's login account      |
+| `POST`   | `/api/employees/:id/account`   | admin                | Create employee login account     |
+| `PATCH`  | `/api/employees/:id/account`   | admin                | Update employee login account     |
+| `GET`    | `/api/employees`               | admin, viewer        | Search / filter / sort / paginate |
+| `POST`   | `/api/employees`               | admin                | Create                            |
+| `GET`    | `/api/employees/export`        | admin, viewer        | CSV export (max 10,000)           |
+| `GET`    | `/api/employees/:id`           | admin, viewer        | Details                           |
+| `PATCH`  | `/api/employees/:id`           | admin                | Partial update                    |
+| `DELETE` | `/api/employees/:id`           | admin                | Soft delete                       |
+| `GET`    | `/api/dashboard/stats`         | admin, viewer        | Dashboard aggregates              |
 
 Status codes: `200`, `201`, `400` (validation / bad id / bad JSON),
 `401`, `403`, `404`, `409` (duplicate username), `429` (with `Retry-After`),

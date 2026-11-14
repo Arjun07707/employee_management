@@ -31,7 +31,9 @@ export async function requireRole(
   if (!payload) throw new UnauthorizedError();
 
   const u = await User.findById(payload.id)
-    .select("name username role isActive tokenVersion mustChangePassword employeeRef")
+    .select(
+      "name username role isActive tokenVersion mustChangePassword employeeRef",
+    )
     .lean();
 
   if (!u || !u.isActive || u.tokenVersion !== payload.tv) {

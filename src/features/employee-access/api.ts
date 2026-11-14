@@ -4,9 +4,7 @@ import type { AccountDTO } from "@/shared/types/account";
 export async function getAccountByEmployee(
   employeeId: string,
 ): Promise<AccountDTO | null> {
-  return apiFetch<AccountDTO | null>(
-    `/api/employees/${employeeId}/account`,
-  );
+  return apiFetch<AccountDTO | null>(`/api/employees/${employeeId}/account`);
 }
 
 export async function createAccountForEmployee(

@@ -248,9 +248,7 @@ export async function exportEmployeesCsv(
   };
 }
 
-export async function getOwnProfile(
-  userId: string,
-): Promise<EmployeeDTO> {
+export async function getOwnProfile(userId: string): Promise<EmployeeDTO> {
   const user = await User.findById(userId).select("employeeRef").lean();
   if (!user || !user.employeeRef) {
     throw new NotFoundError("Employee record not found");

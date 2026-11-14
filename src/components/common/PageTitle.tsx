@@ -36,10 +36,7 @@ export function PageTitle({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <h1
-      ref={ref}
-      className="page-title text-foreground"
-    >
+    <h1 ref={ref} className="page-title text-foreground">
       {children}
     </h1>
   );

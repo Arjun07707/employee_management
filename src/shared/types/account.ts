@@ -1,12 +1,13 @@
 import type { Role } from "@/shared/constants";
 
-export type UsernameCheckReason = "taken" | "invalid" | "reserved" | "current" | "ok";
+export type UsernameCheckReason =
+  "taken" | "invalid" | "reserved" | "current" | "ok";
 
 export interface UsernameCheckResult {
-  available: boolean;            // true for "ok" and "current"
+  available: boolean; // true for "ok" and "current"
   reason: UsernameCheckReason;
   message: string;
-  suggestions?: string[];        // only when taken (max 3)
+  suggestions?: string[]; // only when taken (max 3)
 }
 
 export interface AccountDTO {

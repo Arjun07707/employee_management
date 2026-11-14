@@ -7,7 +7,10 @@ import { z } from "zod";
 import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
-import { passwordSchema, usernameSchema } from "@/shared/schemas/account.schema";
+import {
+  passwordSchema,
+  usernameSchema,
+} from "@/shared/schemas/account.schema";
 import type { AccountDTO } from "@/shared/types/account";
 import { ApiError } from "@/lib/api-client";
 import { generatePassword } from "@/lib/generate-password";

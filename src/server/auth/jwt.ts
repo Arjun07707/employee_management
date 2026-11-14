@@ -18,7 +18,9 @@ const payloadSchema = z.object({
   mcp: z.boolean(),
 });
 
-export async function signSession(user: SessionUserDTO & { tokenVersion: number }): Promise<string> {
+export async function signSession(
+  user: SessionUserDTO & { tokenVersion: number },
+): Promise<string> {
   return new SignJWT({
     role: user.role,
     username: user.username,

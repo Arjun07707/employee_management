@@ -45,7 +45,9 @@ export function CredentialsReveal({
     <div className="space-y-2.5 rounded-card border border-border bg-surface-2 p-4">
       <p className="caption text-muted-foreground">{hint}</p>
       <CredentialRow label="Username" value={username} mono />
-      {password ? <CredentialRow label="Password" value={password} mono /> : null}
+      {password ? (
+        <CredentialRow label="Password" value={password} mono />
+      ) : null}
     </div>
   );
 }

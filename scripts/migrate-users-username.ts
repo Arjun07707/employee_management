@@ -19,7 +19,6 @@ function deriveUsername(email: string): string {
   return username.slice(0, USERNAME_MAX);
 }
 
-
 async function main(): Promise<void> {
   await mongoose.connect(env.MONGODB_URI, {
     bufferCommands: false,

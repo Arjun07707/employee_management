@@ -11,7 +11,8 @@ import { User } from "@/server/models/user.model";
 import { loginSchema } from "@/shared/schemas/account.schema";
 
 let dummyHash: string | null = null;
-const getDummyHash = () => (dummyHash ??= bcrypt.hashSync("not-a-real-password", 12));
+const getDummyHash = () =>
+  (dummyHash ??= bcrypt.hashSync("not-a-real-password", 12));
 
 export interface LoginResult {
   user: SessionUserDTO & { tokenVersion: number };
@@ -21,7 +22,9 @@ export interface LoginResult {
 export async function login(
   input: z.infer<typeof loginSchema>,
 ): Promise<LoginResult> {
-  const user = await User.findOne({ username: input.username }).select("+passwordHash");
+  const user = await User.findOne({ username: input.username }).select(
+    "+passwordHash",
+  );
 
   const passwordOk = await bcrypt.compare(
     input.password,
@@ -33,10 +36,15 @@ export async function login(
   }
 
   if (!user.isActive) {
-    throw new ForbiddenError("Your account is disabled. Please contact your administrator.");
+    throw new ForbiddenError(
+      "Your account is disabled. Please contact your administrator.",
+    );
   }
 
-  await User.updateOne({ _id: user._id }, { $set: { lastLoginAt: new Date() } });
+  await User.updateOne(
+    { _id: user._id },
+    { $set: { lastLoginAt: new Date() } },
+  );
 
   const sessionUser: SessionUserDTO & { tokenVersion: number } = {
     id: user._id.toString(),
@@ -57,7 +65,9 @@ export async function login(
 
 export async function getUserById(id: string): Promise<SessionUserDTO | null> {
   const user = await User.findById(id)
-    .select("name username role isActive mustChangePassword employeeRef tokenVersion")
+    .select(
+      "name username role isActive mustChangePassword employeeRef tokenVersion",
+    )
     .lean();
 
   if (!user) return null;

@@ -1,6 +1,12 @@
 import "server-only";
 
-import { Schema, model, models, type InferSchemaType, type Model } from "mongoose";
+import {
+  Schema,
+  model,
+  models,
+  type InferSchemaType,
+  type Model,
+} from "mongoose";
 
 import { ROLES } from "@/shared/constants";
 import { USERNAME_REGEX } from "@/shared/schemas/account.schema";

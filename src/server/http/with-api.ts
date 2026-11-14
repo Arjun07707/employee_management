@@ -11,7 +11,10 @@ import { requireRole } from "@/server/auth/session";
 import { connectDB } from "@/server/db/connect";
 import { handleError } from "@/server/http/handle-error";
 import { getClientIp } from "@/server/security/ip";
-import { checkApiRateLimit, enforceRateLimit } from "@/server/security/rate-limit";
+import {
+  checkApiRateLimit,
+  enforceRateLimit,
+} from "@/server/security/rate-limit";
 
 type ApiHandler<P> = (
   request: NextRequest,

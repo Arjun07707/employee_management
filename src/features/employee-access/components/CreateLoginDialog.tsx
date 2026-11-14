@@ -6,7 +6,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Sparkles } from "lucide-react";
 
-import { passwordSchema, usernameSchema } from "@/shared/schemas/account.schema";
+import {
+  passwordSchema,
+  usernameSchema,
+} from "@/shared/schemas/account.schema";
 import { ApiError } from "@/lib/api-client";
 import { generatePassword } from "@/lib/generate-password";
 import { suggestUsername } from "@/lib/suggest-username";
@@ -140,7 +143,11 @@ export function CreateLoginDialog({
                   className="h-7 px-2"
                   onClick={onGenerate}
                 >
-                  <Sparkles className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+                  <Sparkles
+                    className="size-3.5"
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
                   Generate
                 </Button>
               </div>

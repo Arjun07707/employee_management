@@ -84,7 +84,9 @@ export function StatCard({
         <p className="eyebrow text-muted-foreground">
           {index != null ? (
             <>
-              <span className="font-mono">{String(index).padStart(2, "0")}</span>
+              <span className="font-mono">
+                {String(index).padStart(2, "0")}
+              </span>
               {" / "}
               {label}
             </>

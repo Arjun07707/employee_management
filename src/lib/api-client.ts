@@ -94,10 +94,7 @@ export async function apiFetch<T>(
 
     // Already on the login page: surface the failure without a reload loop.
     if (current.startsWith("/login")) {
-      throw new ApiError(
-        401,
-        "Session expired. Please sign in again.",
-      );
+      throw new ApiError(401, "Session expired. Please sign in again.");
     }
 
     const target =
@@ -145,7 +142,7 @@ export async function apiFetchPaginated<T>(
   const body = (await readBody(response)) as
     ApiPaginated<T> | ApiErrorBody | null;
 
-    if (!response.ok) {
+  if (!response.ok) {
     if (
       response.status === 401 &&
       !skipAuthRedirect &&
@@ -155,10 +152,7 @@ export async function apiFetchPaginated<T>(
 
       // Already on the login page: surface the failure without a reload loop.
       if (current.startsWith("/login")) {
-        throw new ApiError(
-          401,
-          "Session expired. Please sign in again.",
-        );
+        throw new ApiError(401, "Session expired. Please sign in again.");
       }
 
       window.location.assign(

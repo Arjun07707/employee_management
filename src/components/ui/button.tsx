@@ -55,7 +55,12 @@ function showArrow(
   loading: boolean,
   asChild: boolean,
 ) {
-  return variant === "primary" && (size === "md" || size === "lg") && !loading && !asChild;
+  return (
+    variant === "primary" &&
+    (size === "md" || size === "lg") &&
+    !loading &&
+    !asChild
+  );
 }
 
 const baseClasses = [

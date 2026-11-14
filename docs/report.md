@@ -8,11 +8,11 @@ This document describes every role in the application, what each role can do, an
 
 The application has three roles, defined in `src/shared/constants/index.ts` as `ROLES = ["admin", "viewer", "employee"]`.
 
-| Role | Scope | Summary |
-| --- | --- | --- |
-| `admin` | Full system access | Manages employee records and employee login accounts. |
-| `viewer` | Read-only access | Can browse the directory and dashboard but cannot change data. |
-| `employee` | Self-service only | Can view their own profile and change their own credentials. |
+| Role       | Scope              | Summary                                                        |
+| ---------- | ------------------ | -------------------------------------------------------------- |
+| `admin`    | Full system access | Manages employee records and employee login accounts.          |
+| `viewer`   | Read-only access   | Can browse the directory and dashboard but cannot change data. |
+| `employee` | Self-service only  | Can view their own profile and change their own credentials.   |
 
 Roles are enforced in two layers:
 
@@ -24,6 +24,7 @@ Roles are enforced in two layers:
 Full read/write access to the system.
 
 **Pages**
+
 - `/dashboard` — overview statistics and charts.
 - `/employees` — directory list with search, filters, sort, pagination.
 - `/employees/[id]` — employee details, including the **Login access** card.
@@ -33,6 +34,7 @@ Full read/write access to the system.
 - `/me` — view own profile.
 
 **API access**
+
 - `GET /api/dashboard/stats`
 - `GET /api/employees`, `GET /api/employees/:id`, `GET /api/employees/export`
 - `POST /api/employees`, `PATCH /api/employees/:id`, `DELETE /api/employees/:id` (soft delete)
@@ -40,6 +42,7 @@ Full read/write access to the system.
 - `GET /api/auth/me`, `GET /api/auth/username-available`, `POST /api/auth/change-credentials`, `POST /api/auth/logout`
 
 **Capabilities**
+
 - Create, edit and soft-delete employees.
 - Export the filtered directory to CSV (max 10,000 rows).
 - Create a login for an employee (username, password, “must change on first sign-in”).
@@ -52,6 +55,7 @@ Full read/write access to the system.
 Read-only access to the directory and dashboard.
 
 **Pages**
+
 - `/dashboard`
 - `/employees`
 - `/employees/[id]`
@@ -59,11 +63,13 @@ Read-only access to the directory and dashboard.
 - `/me`
 
 **API access**
+
 - `GET /api/dashboard/stats`
 - `GET /api/employees`, `GET /api/employees/:id`, `GET /api/employees/export`
 - `GET /api/auth/me`, `POST /api/auth/change-credentials`, `POST /api/auth/logout`
 
 **Capabilities**
+
 - View dashboard statistics and charts.
 - Browse, search, filter, sort and paginate employees.
 - View employee details.
@@ -71,6 +77,7 @@ Read-only access to the directory and dashboard.
 - Change their own credentials.
 
 **Restrictions**
+
 - No create, edit or delete actions.
 - No employee login management (the Login access card is hidden and its API routes are admin-only).
 - No access to `/api/auth/username-available` (admin/employee only).
@@ -80,39 +87,43 @@ Read-only access to the directory and dashboard.
 Self-service access, linked to an Employee record via `employeeRef`.
 
 **Pages**
+
 - `/me` — own profile.
 - `/account` — change own username / password (also the forced first-login password-change screen).
 
 **API access**
+
 - `/api/auth/*` (login, logout, me, change-credentials)
 - `/api/me`
 
 **Capabilities**
+
 - Sign in with the username/password provisioned by an admin.
 - View their own profile.
 - Change their own username and password.
 
 **Restrictions**
+
 - Redirected away from `/dashboard`, `/employees`, etc. to `/me`.
 - API calls other than `/api/auth/*` and `/api/me` are rejected with `403`.
 - If `mustChangePassword` is set, all pages/APIs except `/account` and `/api/auth/*` are blocked until the password is changed.
 
 ### 1.4 Access matrix
 
-| Capability | admin | viewer | employee |
-| --- | :---: | :---: | :---: |
-| Sign in | ✅ | ✅ | ✅ |
-| Dashboard statistics | ✅ | ✅ | — |
-| Browse employees | ✅ | ✅ | — |
-| View employee details | ✅ | ✅ | — |
-| Export CSV | ✅ | ✅ | — |
-| Create employee | ✅ | — | — |
-| Edit employee | ✅ | — | — |
-| Soft-delete employee | ✅ | — | — |
-| Create employee login | ✅ | — | — |
-| Manage / reset / disable employee login | ✅ | — | — |
-| View own profile (`/me`) | ✅ | ✅ | ✅ |
-| Change own credentials | ✅ | ✅ | ✅ |
+| Capability                              | admin | viewer | employee |
+| --------------------------------------- | :---: | :----: | :------: |
+| Sign in                                 |  ✅   |   ✅   |    ✅    |
+| Dashboard statistics                    |  ✅   |   ✅   |    —     |
+| Browse employees                        |  ✅   |   ✅   |    —     |
+| View employee details                   |  ✅   |   ✅   |    —     |
+| Export CSV                              |  ✅   |   ✅   |    —     |
+| Create employee                         |  ✅   |   —    |    —     |
+| Edit employee                           |  ✅   |   —    |    —     |
+| Soft-delete employee                    |  ✅   |   —    |    —     |
+| Create employee login                   |  ✅   |   —    |    —     |
+| Manage / reset / disable employee login |  ✅   |   —    |    —     |
+| View own profile (`/me`)                |  ✅   |   ✅   |    ✅    |
+| Change own credentials                  |  ✅   |   ✅   |    ✅    |
 
 ---
 

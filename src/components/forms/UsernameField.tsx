@@ -103,9 +103,7 @@ export function UsernameField({
             "block w-full rounded-input border border-input bg-surface pl-9 py-2 pr-3 text-foreground",
             "placeholder-muted-foreground hover:border-foreground/40 focus-visible:border-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             "disabled:cursor-not-allowed disabled:opacity-50",
-            blocking
-              ? "border-foreground border-b-2 border-b-highlight"
-              : "",
+            blocking ? "border-foreground border-b-2 border-b-highlight" : "",
           )}
         />
         <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">

@@ -27,8 +27,13 @@ export function LoginAccessCard({
   employeeId,
   employeeName,
 }: LoginAccessCardProps) {
-  const { data: account, isPending, isError, refetch, isFetching } =
-    useAccount(employeeId);
+  const {
+    data: account,
+    isPending,
+    isError,
+    refetch,
+    isFetching,
+  } = useAccount(employeeId);
   const [createOpen, setCreateOpen] = React.useState(false);
   const [manageOpen, setManageOpen] = React.useState(false);
 
@@ -45,7 +50,11 @@ export function LoginAccessCard({
           {account ? (
             <DotBadge
               variant={account.isActive ? "default" : "muted"}
-              dotClassName={account.isActive ? "bg-foreground" : "border border-current bg-transparent"}
+              dotClassName={
+                account.isActive
+                  ? "bg-foreground"
+                  : "border border-current bg-transparent"
+              }
             >
               {account.isActive ? "Active" : "Disabled"}
             </DotBadge>
@@ -94,7 +103,11 @@ export function LoginAccessCard({
                 variant="secondary"
                 onClick={() => setManageOpen(true)}
               >
-                <KeyRound className="size-4" strokeWidth={1.5} aria-hidden="true" />
+                <KeyRound
+                  className="size-4"
+                  strokeWidth={1.5}
+                  aria-hidden="true"
+                />
                 Manage login
               </Button>
             </div>

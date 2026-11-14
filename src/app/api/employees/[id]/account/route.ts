@@ -5,7 +5,10 @@ import {
   getAccountByEmployee,
   adminUpdateAccount,
 } from "@/server/services/account.service";
-import { createAccountSchema, adminUpdateAccountSchema } from "@/shared/schemas/account.schema";
+import {
+  createAccountSchema,
+  adminUpdateAccountSchema,
+} from "@/shared/schemas/account.schema";
 
 export const GET = withApi<{ id: string }>(
   { roles: ["admin"] },
@@ -29,7 +32,10 @@ export const PATCH = withApi<{ id: string }>(
   { roles: ["admin"] },
   async (request, { params }) =>
     ok(
-      await adminUpdateAccount(params.id, adminUpdateAccountSchema.parse(await request.json())),
+      await adminUpdateAccount(
+        params.id,
+        adminUpdateAccountSchema.parse(await request.json()),
+      ),
       "Account updated successfully",
     ),
 );

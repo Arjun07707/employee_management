@@ -48,9 +48,7 @@ export function PasswordField({
             "block w-full rounded-input border border-input bg-surface pl-9 pr-10 py-2 text-foreground placeholder-muted-foreground",
             "hover:border-foreground/40 focus-visible:border-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             "disabled:cursor-not-allowed disabled:opacity-50",
-            error
-              ? "border-foreground border-b-2 border-b-highlight"
-              : "",
+            error ? "border-foreground border-b-2 border-b-highlight" : "",
           )}
         />
         {showToggle && (

@@ -50,7 +50,7 @@ reads). `errors` is only present for validation and duplicate-username failures.
 | `401` | Missing, invalid, or expired session                         |
 | `403` | Authenticated but the role is not allowed                    |
 | `404` | Resource not found (including soft-deleted employees)        |
-| `409` | Duplicate username                                      |
+| `409` | Duplicate username                                           |
 | `429` | Rate limit exceeded (includes `Retry-After`)                 |
 | `500` | Unexpected server error                                      |
 | `503` | Health check only: database unavailable                      |
@@ -60,10 +60,10 @@ Every API response includes an `x-request-id` header. Send your own
 
 ## Rate limits
 
-| Scope | Limit                   | Key               |
-| ----- | ----------------------- | ----------------- |
+| Scope | Limit                   | Key                  |
+| ----- | ----------------------- | -------------------- |
 | Login | 5 attempts / 15 minutes | client IP + username |
-| API   | 120 requests / minute   | client IP         |
+| API   | 120 requests / minute   | client IP            |
 
 Exceeding a limit returns `429` with a `Retry-After` header (seconds). The
 limiter is in-memory and per process; use a shared store (for example Upstash
@@ -128,10 +128,10 @@ curl -i -c cookies.txt -X POST http://localhost:3000/api/auth/login \
 
 Request body:
 
-| Field      | Type   | Rules                    |
-| ---------- | ------ | ------------------------ |
-| `username` | string | 3–30 chars, lowercased   |
-| `password` | string | 8–128 characters         |
+| Field      | Type   | Rules                  |
+| ---------- | ------ | ---------------------- |
+| `username` | string | 3–30 chars, lowercased |
+| `password` | string | 8–128 characters       |
 
 ```json
 {
@@ -238,12 +238,12 @@ Returns `200` on success and sets a fresh `ems_token` cookie.
 
 Request body:
 
-| Field          | Type      | Rules                                             |
-| -------------- | --------- | ------------------------------------------------- |
-| `currentPassword` | string   | required                                          |
-| `newUsername`    | string?   | 3–30 chars, lowercased                            |
-| `newPassword`    | string?   | 8–72 chars, must differ from `currentPassword`    |
-| `confirmPassword`| string?   | must equal `newPassword` when `newPassword` set   |
+| Field             | Type    | Rules                                           |
+| ----------------- | ------- | ----------------------------------------------- |
+| `currentPassword` | string  | required                                        |
+| `newUsername`     | string? | 3–30 chars, lowercased                          |
+| `newPassword`     | string? | 8–72 chars, must differ from `currentPassword`  |
+| `confirmPassword` | string? | must equal `newPassword` when `newPassword` set |
 
 At least one of `newUsername` or `newPassword` is required.
 
@@ -271,11 +271,11 @@ Role: `admin`. Creates a login account for the employee.
 
 Request body:
 
-| Field              | Type   | Rules                     |
-| ------------------ | ------ | ------------------------- |
-| `username`         | string | required, 3–30 chars      |
-| `password`         | string | required, 8–72 chars      |
-| `mustChangePassword`| boolean | optional, defaults `true` |
+| Field                | Type    | Rules                     |
+| -------------------- | ------- | ------------------------- |
+| `username`           | string  | required, 3–30 chars      |
+| `password`           | string  | required, 8–72 chars      |
+| `mustChangePassword` | boolean | optional, defaults `true` |
 
 Returns `201`. `409` when the employee already has a login or the username is taken.
 
@@ -285,7 +285,6 @@ Role: `admin`. Updates username, password, and/or `isActive`. Changing the
 password bumps the employee's token version, invalidating existing sessions.
 
 ---
-
 
 ## Employees
 

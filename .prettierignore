@@ -4,6 +4,8 @@ out
 build
 coverage
 package-lock.json
+pnpm-lock.yaml
+yarn.lock
 *.tsbuildinfo
 plan
 docs/PROJECT_SPEC.md
