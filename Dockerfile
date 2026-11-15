@@ -3,8 +3,9 @@
 # ---- deps ----------------------------------------------------------------
 FROM node:22-alpine AS deps
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
+RUN corepack enable && corepack prepare pnpm@10.33.0 --activate
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 # ---- build ---------------------------------------------------------------
 FROM node:22-alpine AS builder
@@ -15,12 +16,11 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV MONGODB_URI="mongodb://127.0.0.1:27017/employee_management" \
     JWT_SECRET="build-only-placeholder-secret-at-least-32-chars" \
     JWT_EXPIRES_IN="7d" \
-    ADMIN_EMAIL="admin@example.com" \
-    ADMIN_PASSWORD="build-only-placeholder" \
     NEXT_PUBLIC_APP_NAME="Employee Management"
+RUN corepack enable && corepack prepare pnpm@10.33.0 --activate
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+RUN pnpm run build
 
 # ---- runtime -------------------------------------------------------------
 FROM node:22-alpine AS runner

@@ -16,32 +16,34 @@ jobs:
       MONGODB_URI: mongodb://127.0.0.1:27017/employee_management
       JWT_SECRET: ci-only-placeholder-secret-at-least-32-characters
       JWT_EXPIRES_IN: 7d
-      ADMIN_EMAIL: admin@example.com
-      ADMIN_PASSWORD: Admin@12345
       NEXT_PUBLIC_APP_NAME: Employee Management
 
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Typecheck
-        run: npm run typecheck
+        run: pnpm run typecheck
 
       - name: Format check
-        run: npm run format:check
+        run: pnpm run format:check
 
       - name: Test
-        run: npm test
+        run: pnpm test
 
       - name: Build
-        run: npm run build
+        run: pnpm run build

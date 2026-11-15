@@ -2,11 +2,11 @@
 
 A full-stack employee management app built with **Next.js 16 (App Router)**,
 **TypeScript**, **MongoDB + Mongoose**, **Zod**, and **JWT auth**. The API and
-the app run in a single Next.js process, so one `npm run dev` is all you need.
+the app run in a single Next.js process, so one `pnpm dev` is all you need.
 
 > **Status:** complete. The backend (API, auth, tests) and the frontend UI
 > (login, dashboard, employees CRUD, charts, GSAP motion, dark/light theme)
-> are both implemented. One `npm run dev` runs everything.
+> are both implemented. One `pnpm dev` runs everything.
 
 ## Tech stack
 
@@ -24,28 +24,29 @@ the app run in a single Next.js process, so one `npm run dev` is all you need.
 
 ## Quick start
 
-**Prerequisites:** Node.js 20.9+ (22 LTS recommended) and a MongoDB instance
-(MongoDB Atlas, a local install, or Docker).
+**Prerequisites:** Node.js 20.9+ (22 LTS recommended), pnpm 10+ (via
+`corepack enable pnpm`), and a MongoDB instance (MongoDB Atlas, a local
+install, or Docker).
 
 ```bash
 # 1. Install dependencies
-npm install
+pnpm install
 
 # 2. Create your env file and fill in the values
 cp .env.example .env.local          # macOS / Linux
 Copy-Item .env.example .env.local   # Windows PowerShell
 
 # 3. Start MongoDB locally (only if you use Docker)
-npm run db:up
+pnpm db:up
 
-# 4. Create the admin account from ADMIN_EMAIL / ADMIN_PASSWORD
-npm run create-admin
+# 4. Create the admin account from ADMIN_USERNAME / ADMIN_PASSWORD
+pnpm create-admin
 
 # 5. Optional: add 60 fake employees
-npm run seed
+pnpm seed
 
 # 6. Run the app (API + UI in one process)
-npm run dev
+pnpm dev
 ```
 
 Open <http://localhost:3000>. The API lives under `/api`; see
@@ -53,16 +54,15 @@ Open <http://localhost:3000>. The API lives under `/api`; see
 
 ### Environment variables
 
-| Variable               | Required | Notes                                         |
-| ---------------------- | -------- | --------------------------------------------- |
-| `MONGODB_URI`          | yes      | Local URI or Atlas `mongodb+srv://` URI       |
-| `JWT_SECRET`           | yes      | At least 32 characters; use a random value    |
-| `JWT_EXPIRES_IN`       | no       | `7d` by default (`30m`, `12h`, `7d`, …)       |
-| `ADMIN_EMAIL`          | yes      | Admin email used by `npm run create-admin`    |
-| `ADMIN_PASSWORD`       | yes      | Admin password used by `npm run create-admin` |
-| `ADMIN_USERNAME`       | yes      | Admin username used by `npm run create-admin` |
-| `NODE_ENV`             | no       | `development` / `test` / `production`         |
-| `NEXT_PUBLIC_APP_NAME` | no       | Display name used by the UI                   |
+| Variable               | Required | Notes                                      |
+| ---------------------- | -------- | ------------------------------------------ |
+| `MONGODB_URI`          | yes      | Local URI or Atlas `mongodb+srv://` URI    |
+| `JWT_SECRET`           | yes      | At least 32 characters; use a random value |
+| `JWT_EXPIRES_IN`       | no       | `7d` by default (`30m`, `12h`, `7d`, …)    |
+| `ADMIN_PASSWORD`       | setup    | Only needed to run `pnpm create-admin`     |
+| `ADMIN_USERNAME`       | setup    | Only needed to run `pnpm create-admin`     |
+| `NODE_ENV`             | no       | `development` / `test` / `production`      |
+| `NEXT_PUBLIC_APP_NAME` | no       | Display name used by the UI                |
 
 `.env.local` is git-ignored. `.env.example` is committed. Environment values
 are validated with Zod at startup and the app fails fast on bad config.
@@ -72,26 +72,26 @@ are validated with Zod at startup and the app fails fast on bad config.
 - **Atlas:** create a database user with `readWrite` on
   `employee_management`, allow your IP, and paste the SRV URI into
   `MONGODB_URI`.
-- **Docker (local):** `npm run db:up` starts `mongo:7` on port 27017 with a
+- **Docker (local):** `pnpm db:up` starts `mongo:7` on port 27017 with a
   named volume (`mongo_data`), so data survives restarts. Stop it with
-  `npm run db:down`.
+  `pnpm db:down`.
 - **Existing local MongoDB:** point `MONGODB_URI` at it directly.
 
 ## Scripts
 
-| Command                     | Purpose                                             |
-| --------------------------- | --------------------------------------------------- |
-| `npm run dev`               | Start Next.js (app + API) in development            |
-| `npm run build`             | Production build (standalone output)                |
-| `npm start`                 | Serve the production build                          |
-| `npm run lint`              | ESLint                                              |
-| `npm run typecheck`         | Generate Next route types and run `tsc --noEmit`    |
-| `npm test`                  | Run the Vitest suite once                           |
-| `npm run test:watch`        | Vitest in watch mode                                |
-| `npm run seed`              | Insert 60 faker employees through the service layer |
-| `npm run seed -- --clear`   | Wipe employees first, then seed                     |
-| `npm run create-admin`      | Idempotent admin upsert from env                    |
-| `npm run db:up` / `db:down` | Start/stop the Docker MongoDB                       |
+| Command                  | Purpose                                             |
+| ------------------------ | --------------------------------------------------- |
+| `pnpm dev`               | Start Next.js (app + API) in development            |
+| `pnpm build`             | Production build (standalone output)                |
+| `pnpm start`             | Serve the production build                          |
+| `pnpm lint`              | ESLint                                              |
+| `pnpm typecheck`         | Generate Next route types and run `tsc --noEmit`    |
+| `pnpm test`              | Run the Vitest suite once                           |
+| `pnpm test:watch`        | Vitest in watch mode                                |
+| `pnpm seed`              | Insert 60 faker employees through the service layer |
+| `pnpm seed -- --clear`   | Wipe employees first, then seed                     |
+| `pnpm create-admin`      | Idempotent admin upsert from env                    |
+| `pnpm db:up` / `db:down` | Start/stop the Docker MongoDB                       |
 
 ## API overview
 
@@ -189,7 +189,7 @@ modules start with `import "server-only"`.
 ## Testing
 
 ```bash
-npm test
+pnpm test
 ```
 
 The suite uses one shared `mongodb-memory-server` instance started in

@@ -1,7 +1,7 @@
 # API Reference
 
 All endpoints are Next.js Route Handlers under `/api`. They run in the same
-process as the app, so a single `npm run dev` serves both the API and the UI.
+process as the app, so a single `pnpm dev` serves both the API and the UI.
 
 - **Base URL (development):** `http://localhost:3000`
 - **Content type:** `application/json` for requests and responses (except CSV export)

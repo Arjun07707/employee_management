@@ -26,6 +26,7 @@ This document describes every technology used in the Employee Management System,
 | Notifications    | `sonner`                                | 2.0                        |
 | Testing          | Vitest + `mongodb-memory-server`        | 5.0 / 11.3                 |
 | Tooling          | ESLint 9, Prettier, `tsx`, `dotenv`     | —                          |
+| Package manager  | pnpm                                    | 10.33                      |
 | Runtime          | Node.js                                 | 20.9+ (22 LTS recommended) |
 
 ---
@@ -53,7 +54,7 @@ This document describes every technology used in the Employee Management System,
 ### TypeScript 5 (strict)
 
 - **What it does:** Static typing across the whole codebase.
-- **Why:** Catches integration errors at compile time; strict mode is enabled. `npm run typecheck` runs `next typegen && tsc --noEmit`.
+- **Why:** Catches integration errors at compile time; strict mode is enabled. `pnpm typecheck` runs `next typegen && tsc --noEmit`.
 
 ### Node.js 20.9+
 
@@ -195,10 +196,16 @@ This document describes every technology used in the Employee Management System,
 
 ## 8. Testing & tooling
 
+### pnpm 10
+
+- **What it does:** Installs dependencies and provides a content-addressable store with a strict, symlinked `node_modules`.
+- **How it is used:** The project is pinned via `packageManager` in `package.json` (`pnpm@10.33.0`) and locked by `pnpm-lock.yaml`. Install with `pnpm install` (CI uses `pnpm install --frozen-lockfile`).
+- **Why:** Fast, disk-efficient, reproducible installs with explicit dependency boundaries.
+
 ### Vitest 5
 
 - **What it does:** Unit/integration test runner.
-- **How it is used:** 6 suites / 31 tests covering services, validation and API behavior. Run with `npm test` or `npm run test:watch`.
+- **How it is used:** 6 suites / 31 tests covering services, validation and API behavior. Run with `pnpm test` or `pnpm test:watch`.
 
 ### `mongodb-memory-server`
 
@@ -208,7 +215,7 @@ This document describes every technology used in the Employee Management System,
 ### `@faker-js/faker`
 
 - **What it does:** Generates realistic seed data.
-- **How it is used:** `npm run seed` inserts 60 fake employees through the service layer.
+- **How it is used:** `pnpm seed` inserts 60 fake employees through the service layer.
 
 ### `tsx` + `dotenv`
 
@@ -218,17 +225,17 @@ This document describes every technology used in the Employee Management System,
 ### ESLint 9 + `eslint-config-next`
 
 - **What it does:** Static analysis and Next.js/React rules.
-- **How it is used:** `npm run lint`.
+- **How it is used:** `pnpm lint`.
 
 ### Prettier
 
 - **What it does:** Consistent code formatting.
-- **How it is used:** `npm run format` / `npm run format:check`.
+- **How it is used:** `pnpm format` / `pnpm format:check`.
 
 ### Docker Compose (optional)
 
 - **What it does:** Runs a local `mongo:7` instance with a named volume.
-- **How it is used:** `npm run db:up` / `npm run db:down`. Atlas or an existing MongoDB can be used instead.
+- **How it is used:** `pnpm db:up` / `pnpm db:down`. Atlas or an existing MongoDB can be used instead.
 
 ---
 
@@ -262,15 +269,15 @@ Route Handler → withApi (auth + rate limit) → Zod validation → Service →
 
 ### Scripts
 
-| Command                                    | Purpose                                    |
-| ------------------------------------------ | ------------------------------------------ |
-| `npm run dev`                              | Start the app + API (Turbopack)            |
-| `npm run build` / `npm start`              | Production build / serve                   |
-| `npm run lint`                             | ESLint                                     |
-| `npm run typecheck`                        | Next typegen + `tsc --noEmit`              |
-| `npm test` / `npm run test:watch`          | Vitest                                     |
-| `npm run format` / `format:check`          | Prettier                                   |
-| `npm run seed` / `npm run seed -- --clear` | Seed / wipe + seed employees               |
-| `npm run create-admin`                     | Idempotent admin upsert                    |
-| `npm run migrate:users`                    | Migrate legacy email accounts to usernames |
-| `npm run db:up` / `npm run db:down`        | Start/stop Docker MongoDB                  |
+| Command                              | Purpose                                    |
+| ------------------------------------ | ------------------------------------------ |
+| `pnpm dev`                           | Start the app + API (Turbopack)            |
+| `pnpm build` / `pnpm start`          | Production build / serve                   |
+| `pnpm lint`                          | ESLint                                     |
+| `pnpm typecheck`                     | Next typegen + `tsc --noEmit`              |
+| `pnpm test` / `pnpm test:watch`      | Vitest                                     |
+| `pnpm format` / `format:check`       | Prettier                                   |
+| `pnpm seed` / `pnpm seed -- --clear` | Seed / wipe + seed employees               |
+| `pnpm create-admin`                  | Idempotent admin upsert                    |
+| `pnpm migrate:users`                 | Migrate legacy email accounts to usernames |
+| `pnpm db:up` / `pnpm db:down`        | Start/stop Docker MongoDB                  |

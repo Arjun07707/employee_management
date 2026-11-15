@@ -18,16 +18,6 @@ const envSchema = z.object({
     .string()
     .min(32, "JWT_SECRET must be at least 32 characters long"),
   JWT_EXPIRES_IN: expiresInSchema,
-  ADMIN_EMAIL: z.string().trim().toLowerCase().email("Invalid ADMIN_EMAIL"),
-  ADMIN_PASSWORD: z
-    .string()
-    .min(8, "ADMIN_PASSWORD must be at least 8 characters long"),
-  ADMIN_USERNAME: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .min(3, "ADMIN_USERNAME must be at least 3 characters")
-    .default("admin"),
   NEXT_PUBLIC_APP_NAME: z.string().trim().min(1).default("Employee Management"),
 });
 
